@@ -1,5 +1,5 @@
 cabal-version:      2.4
-name:               haskell
+name:               advent
 version:            0.1.0.0
 synopsis:
 homepage:
@@ -9,17 +9,17 @@ maintainer:         owen@owen.cafe
 extra-source-files: CHANGELOG.md
 
 library
-    exposed-modules:  MyLib
+    exposed-modules:  Ad01
     build-depends:    base ^>=4.14.1.0
     hs-source-dirs:   lib
     default-language: Haskell2010
 
-executable haskell
+executable advent-exe
     main-is:          Main.hs
     hs-source-dirs:   src
     build-depends:
         base ^>=4.14.1.0,
-        haskell
+        advent
 
     default-language: Haskell2010
 
