@@ -13,12 +13,12 @@ gts :: [(Int, Int)] -> Int
 gts = fmap (\(a, v) -> if v > a then 1 else 0)
   >>> sum
 
-slids' :: Int -> [a] -> [[a]]
-slids' n [] = []
-slids' n xs = take n xs : slids n (tail xs)
+windows' :: Int -> [a] -> [[a]]
+windows' n [] = []
+windows' n xs = take n xs : windows n (tail xs)
 
-slids :: Int -> [a] -> [[a]]
-slids n xs = slids' n xs
+windows :: Int -> [a] -> [[a]]
+windows n xs = windows' n xs
   & filter ((== n) . length)
 
 readInput :: IO [Int]
@@ -28,14 +28,16 @@ readInput = readFile "input/01"
   <&> fmap read
 
 solve2 :: [Int] -> Int
-solve2 xs = let ys = sum <$> slids 3 xs in
+solve2 xs = let ys = sum <$> windows 3 xs in
   zip ys (tail ys)
   & gts
 
 main1 :: IO ()
-main1 = solve1 <$> readInput
+main1 = readInput
+  <&> solve1
   >>= print
 
 main2 :: IO ()
-main2 = solve2 <$> readInput
+main2 = readInput
+  <&> solve2
   >>= print
