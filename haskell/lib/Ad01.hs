@@ -7,10 +7,10 @@ import Data.Foldable
 
 solve1 :: [Int] -> Int
 solve1 xs = zip xs (tail xs)
-  & gts
+  & increases
 
-gts :: [(Int, Int)] -> Int
-gts = fmap (\(a, v) -> if v > a then 1 else 0)
+increases :: [(Int, Int)] -> Int
+increases = fmap (\(a, v) -> if v > a then 1 else 0)
   >>> sum
 
 windows' :: Int -> [a] -> [[a]]
@@ -30,7 +30,7 @@ readInput = readFile "input/01"
 solve2 :: [Int] -> Int
 solve2 xs = let ys = sum <$> windows 3 xs in
   zip ys (tail ys)
-  & gts
+  & increases
 
 main1 :: IO ()
 main1 = readInput
