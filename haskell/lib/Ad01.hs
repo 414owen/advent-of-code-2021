@@ -22,12 +22,10 @@ slids n xs = slids' n xs
   & filter ((== n) . length)
 
 readInput :: IO [Int]
-readInput = do
-  file <- readFile "input/01"
-  pure $ file
-    & lines
-    & filter (/= "")
-    & fmap read
+readInput = readFile "input/01"
+  <&> lines
+  <&> filter (/= "")
+  <&> fmap read
 
 solve2 :: [Int] -> Int
 solve2 xs = let ys = sum <$> slids 3 xs in
