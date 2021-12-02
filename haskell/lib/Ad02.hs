@@ -46,8 +46,8 @@ follow2 (aim, depth, x) = \case
   Forward n -> (aim, depth + aim * n, x + n)
 
 solve2 :: [Instruction] -> Int
-solve2 insts = let (_, d, p) = foldl' follow2 (0, 0, 0) insts in
-  d * p
+solve2 insts = foldl' follow2 (0, 0, 0) insts & \case
+  (_, d, p) -> d * p
 
 main2 :: IO ()
 main2 = readInput
