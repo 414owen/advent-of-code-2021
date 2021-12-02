@@ -25,16 +25,31 @@ readInput = readFile "input/02"
   <&> fmap words
   <&> fmap parseInst
 
-follow :: (Int, Int) -> Instruction -> (Int, Int)
-follow (depth, x) = \case
+follow1 :: (Int, Int) -> Instruction -> (Int, Int)
+follow1 (depth, x) = \case
   Up n -> (depth - n, x)
   Down n -> (depth + n, x)
   Forward n -> (depth, x + n)
 
 solve1 :: [Instruction] -> Int
-solve1 = uncurry (*) . foldl' follow (0, 0)
+solve1 = uncurry (*) . foldl' follow1 (0, 0)
 
 main1 :: IO ()
 main1 = readInput
   <&> solve1
+  >>= print
+
+follow2 :: (Int, Int, Int) -> Instruction -> (Int, Int, Int)
+follow2 (aim, depth, x) = \case
+  Up n -> (aim - n, depth, x)
+  Down n -> (aim + n, depth, x)
+  Forward n -> (aim, depth + aim * n, x + n)
+
+solve2 :: [Instruction] -> Int
+solve2 insts = let (_, d, p) = foldl' follow2 (0, 0, 0) insts in
+  d * p
+
+main2 :: IO ()
+main2 = readInput
+  <&> solve2
   >>= print

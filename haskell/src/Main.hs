@@ -16,4 +16,5 @@ main = do
       (1, 1) -> Ad01.main1
       (1, 2) -> Ad01.main2
       (2, 1) -> Ad02.main1
+      (2, 2) -> Ad02.main2
     _ -> putStrLn "Invalid problem number!"
