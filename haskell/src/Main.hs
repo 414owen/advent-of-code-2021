@@ -8,6 +8,7 @@ import System.Environment
 import qualified Ad01
 import qualified Ad02
 import qualified Ad03
+import qualified Ad04
 
 main :: IO ()
 main = do
@@ -20,4 +21,6 @@ main = do
       (2, 2) -> Ad02.main2
       (3, 1) -> Ad03.main1
       (3, 2) -> Ad03.main2
+      (4, 1) -> Ad04.main1
+      (4, 2) -> Ad04.main2
     _ -> putStrLn "Invalid problem number!"
