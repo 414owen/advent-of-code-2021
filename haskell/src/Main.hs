@@ -7,6 +7,7 @@ import System.Environment
 
 import qualified Ad01
 import qualified Ad02
+import qualified Ad03
 
 main :: IO ()
 main = do
@@ -17,4 +18,6 @@ main = do
       (1, 2) -> Ad01.main2
       (2, 1) -> Ad02.main1
       (2, 2) -> Ad02.main2
+      (3, 1) -> Ad03.main1
+      (3, 2) -> Ad03.main2
     _ -> putStrLn "Invalid problem number!"
