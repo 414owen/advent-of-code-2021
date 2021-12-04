@@ -78,7 +78,6 @@ main1 = readInput
   >>= print
 
 main2 :: IO ()
-main2 = do
-  readInput
+main2 = readInput
   <&> uncurry solve2
   >>= print
