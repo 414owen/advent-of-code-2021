@@ -25,7 +25,7 @@ gamma (cs:xs)
 epsilon :: [String] -> String
 epsilon [] = []
 epsilon (cs:xs)
-  | num '0' cs < num '1' cs = '0' : epsilon xs
+  | num '0' cs <= num '1' cs = '0' : epsilon xs
   | otherwise = '1' : epsilon xs
 
 ox :: Int -> [String] -> String
@@ -36,17 +36,11 @@ ox n xs = let
   ys = filter ((== c) . (!! n)) xs
   in ox (n + 1) ys
 
-co2' :: [String] -> String
-co2' [] = []
-co2' (cs:xs)
-  | num '0' cs <= num '1' cs = '0' : co2' xs
-  | otherwise = '1' : co2' xs
-
 co2 :: Int -> [String] -> String
 co2 n [x] = x
 co2 n xs = let
   t = transpose xs
-  c = co2' t !! n
+  c = epsilon t !! n
   ys = filter ((== c) . (!! n)) xs
   in co2 (n + 1) ys
 
