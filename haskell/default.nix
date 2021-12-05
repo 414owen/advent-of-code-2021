@@ -1,10 +1,10 @@
-{ mkDerivation, base, lib, tasty, tasty-hedgehog, tasty-hunit }:
+{ mkDerivation, base, lib, containers }:
 mkDerivation {
-  pname = "rwh";
+  pname = "advent";
   version = "0.1.0.0";
   src = ./.;
-  libraryHaskellDepends = [ base ];
-  testHaskellDepends = [ base tasty tasty-hedgehog tasty-hunit ];
-  description = "Real World Haskell solutions";
+  libraryHaskellDepends = [ base, containers ];
+  testHaskellDepends = [ base ];
+  description = "Advent of Code solutions";
   license = lib.licenses.mit;
 }
