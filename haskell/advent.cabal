@@ -15,6 +15,7 @@ library
                     , Ad04
                     , Ad05
                     , Ad06
+                    , Ad07
     build-depends:    base ^>=4.14.1.0
                     , containers
     hs-source-dirs:   lib
