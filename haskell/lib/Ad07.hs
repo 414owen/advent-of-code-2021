@@ -11,38 +11,34 @@ readInput = readFile "input/07"
   <&> (<> "]")
   <&> read
 
+solve :: (Int -> Int -> Int) -> [Int] -> Int
+solve f xs = foldl' min (fuel mi) $ fuel <$> [mi..ma]
+  where
+    mi = minimum xs
+    ma = maximum xs
+
+    fuel :: Int -> Int
+    fuel = fuel' 0 xs
+
+    fuel' :: Int -> [Int] -> Int -> Int
+    fuel' n [] _ = n
+    fuel' n (x:xs) target =
+      fuel' (n + f x target) xs target
+
+dist :: Int -> Int -> Int
+dist x y = abs (x - y)
 
 solve1 :: [Int] -> Int
-solve1 xs = foldl' min (dist mi) $ dist <$> [mi..ma]
-  where
-    mi = minimum xs
-    ma = maximum xs
+solve1 = solve dist
 
-    dist :: Int -> Int
-    dist = dist' 0 xs
+sumTo :: Int -> Int
+sumTo n = n * (n + 1) `div` 2
 
-    dist' :: Int -> [Int] -> Int -> Int
-    dist' n [] _ = n
-    dist' n (x:xs) target =
-      dist' (n + abs (x - target)) xs target
-
-sumto :: Int -> Int
-sumto n = n * (n + 1) `div` 2
+sumToDist :: Int -> Int -> Int
+sumToDist x y = sumTo (dist x y)
 
 solve2 :: [Int] -> Int
-solve2 xs = foldl' min (dist mi) $ dist <$> [mi..ma]
-  where
-    mi = minimum xs
-    ma = maximum xs
-
-    dist :: Int -> Int
-    dist = dist' 0 xs
-
-    dist' :: Int -> [Int] -> Int -> Int
-    dist' n [] _ = n
-    dist' n (x:xs) target =
-      dist' (n + sumto (abs (x - target))) xs target
-
+solve2 = solve sumToDist
 
 main1 :: IO ()
 main1 = readInput
