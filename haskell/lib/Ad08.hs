@@ -25,14 +25,11 @@ fl n = filter ((== n) . length)
 eight :: String
 eight = ['a'..'g']
 
-missing :: String -> String
-missing s = eight \\ s
-
 fc :: Char -> [String] -> [String]
 fc c = filter (c `elem`)
 
 fs :: String -> [String] -> [String]
-fs s xs = foldl' (flip fc) xs s
+fs = flip $ foldl' $ flip fc
 
 fmis :: Char -> [String] -> [String]
 fmis c = filter (not . (c `elem`))
@@ -45,14 +42,14 @@ findDigits xs =
       a = head $ seven \\ one
       sixes = fl 6 xs
       six = head $ sixes \\ fs one sixes
-      c = head $ missing six
+      c = head $ eight \\ six
       f = head $ one \\ [c]
       fives = fl 5 xs
       two = fives & fmis f & head
-      b = missing two \\ [f] & head
+      b = (eight \\ two) \\ [f] & head
       three = fives & fmis b & fmis e & head
       five = fl 5 xs & fmis c & head
-      e = head $ missing five \\ [c]
+      e = head $ (eight \\ five) \\ [c]
       nine = sixes & fmis e & head
       zero = sixes & fs [c, e] & head
   in sort <$> [zero, one, two, three, four, five, six, seven, eight, nine]
