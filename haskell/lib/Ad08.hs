@@ -55,7 +55,7 @@ findDigits xs =
       five = fl 5 xs & fmis c & head
       e = head $ (eight \\ five) \\ [c]
       nine = sixes & fmis e & head
-      zero = sixes & fs [c, e] & head
+      zero = sixes \\ [nine, six] & head
   in sort <$> [zero, one, two, three, four, five, six, seven, eight, nine]
 
 solveLine1 :: Line -> Int
