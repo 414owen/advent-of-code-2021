@@ -12,18 +12,11 @@ readInput = readFile "input/07"
   <&> read
 
 solve :: (Int -> Int -> Int) -> [Int] -> Int
-solve f xs = foldl' min (fuel mi) $ fuel <$> [mi..ma]
+solve f l@(x:_) = foldl' min (fuel l x) $ fuel l <$> [minimum l..maximum l]
   where
-    mi = minimum xs
-    ma = maximum xs
-
-    fuel :: Int -> Int
-    fuel = fuel' 0 xs
-
-    fuel' :: Int -> [Int] -> Int -> Int
-    fuel' n [] _ = n
-    fuel' n (x:xs) target =
-      fuel' (n + f x target) xs target
+    fuel :: [Int] -> Int -> Int
+    fuel [] _ = 0
+    fuel (x:xs) target = f x target + fuel xs target
 
 dist :: Int -> Int -> Int
 dist x y = abs (x - y)
