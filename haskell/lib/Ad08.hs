@@ -22,8 +22,11 @@ readInput = readFile "input/08"
 fl :: Int -> [String] -> [String]
 fl n = filter ((== n) . length)
 
+eight :: String
+eight = ['a'..'g']
+
 missing :: String -> String
-missing s = ['a'..'g'] \\ s
+missing s = eight \\ s
 
 fc :: Char -> [String] -> [String]
 fc c = filter (c `elem`)
@@ -35,7 +38,6 @@ findMapping :: [String] -> [String]
 findMapping xs =
   let one = head $ fl 2 xs
       four = head $ fl 4 xs
-      eight = head $ fl 7 xs
       seven = head $ fl 3 xs
       a = head $ seven \\ one
       sixes = fl 6 xs
