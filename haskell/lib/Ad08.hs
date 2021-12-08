@@ -37,8 +37,8 @@ fs s xs = foldl' (flip fc) xs s
 fmis :: Char -> [String] -> [String]
 fmis c = filter (not . (c `elem`))
 
-findMapping :: [String] -> [String]
-findMapping xs =
+findDigits :: [String] -> [String]
+findDigits xs =
   let one = head $ fl 2 xs
       four = head $ fl 4 xs
       seven = head $ fl 3 xs
@@ -59,7 +59,7 @@ findMapping xs =
 
 solveLine1 :: Line -> Int
 solveLine1 (ins, outs) =
-  let l = findMapping ins
+  let l = findDigits ins
       wanted = (l !! 1) : (l !! 4) : (l !! 7) : (l !! 8) : []
   in length $ filter (`elem` wanted) outs
 
@@ -72,7 +72,7 @@ fromDigits = fromDigits' . reverse
 
 solveLine2 :: Line -> Int
 solveLine2 (ins, outs) =
-  let l = findMapping ins
+  let l = findDigits ins
       digs = fmap (fromJust . flip elemIndex l) outs
   in fromDigits digs
 
