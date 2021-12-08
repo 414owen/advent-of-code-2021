@@ -41,7 +41,7 @@ findDigits xs =
       two = fives \\ [five, three] & head
       three = fives & fs one & head
       four = head $ fl 4 xs
-      five = fives & filter ((== six) . (union six)) & head
+      five = fives & find ((== six) . (union six)) & fromJust
       six = head $ sixes \\ fs one sixes
       seven = head $ fl 3 xs
       eight = ['a'..'g']
