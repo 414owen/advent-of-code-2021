@@ -12,6 +12,7 @@ import qualified Ad04
 import qualified Ad05
 import qualified Ad06
 import qualified Ad07
+import qualified Ad08
 
 main :: IO ()
 main = do
