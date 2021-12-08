@@ -36,16 +36,16 @@ findDigits xs =
   let sixes = fl 6 xs
       fives = fl 5 xs
 
-      eight = ['a'..'g']
-      one = head $ fl 2 xs
-      four = head $ fl 4 xs
-      seven = head $ fl 3 xs
-      nine = sixes & fs four & head
-      three = fives & fs one & head
-      six = head $ sixes \\ fs one sixes
-      five = fives & filter ((== six) . (union six)) & head
-      two = fives \\ [five, three] & head
       zero = sixes \\ [nine, six] & head
+      one = head $ fl 2 xs
+      two = fives \\ [five, three] & head
+      three = fives & fs one & head
+      four = head $ fl 4 xs
+      five = fives & filter ((== six) . (union six)) & head
+      six = head $ sixes \\ fs one sixes
+      seven = head $ fl 3 xs
+      eight = ['a'..'g']
+      nine = sixes & fs four & head
 
   in sort <$> [zero, one, two, three, four, five, six, seven, eight, nine]
 
