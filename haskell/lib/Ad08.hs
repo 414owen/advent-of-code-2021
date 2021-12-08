@@ -31,6 +31,9 @@ missing s = eight \\ s
 fc :: Char -> [String] -> [String]
 fc c = filter (c `elem`)
 
+fs :: String -> [String] -> [String]
+fs s xs = foldl' (flip fc) xs s
+
 fmis :: Char -> [String] -> [String]
 fmis c = filter (not . (c `elem`))
 
@@ -41,8 +44,7 @@ findMapping xs =
       seven = head $ fl 3 xs
       a = head $ seven \\ one
       sixes = fl 6 xs
-      ninezero = sixes & fc (one !! 1) & fc (head one)
-      six = head $ sixes \\ ninezero
+      six = head $ sixes \\ fs one sixes
       c = head $ missing six
       f = head $ one \\ [c]
       fives = fl 5 xs
@@ -52,7 +54,7 @@ findMapping xs =
       five = fl 5 xs & fmis c & head
       e = head $ missing five \\ [c]
       nine = sixes & fmis e & head
-      zero = sixes & fc c & fc e & head
+      zero = sixes & fs [c, e] & head
   in sort <$> [zero, one, two, three, four, five, six, seven, eight, nine]
 
 solveLine1 :: Line -> Int
