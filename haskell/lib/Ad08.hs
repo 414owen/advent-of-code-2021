@@ -34,27 +34,19 @@ fc c = filter (c `elem`)
 fs :: String -> [String] -> [String]
 fs = flip $ foldl' $ flip fc
 
--- filter by missing char
-fmis :: Char -> [String] -> [String]
-fmis c = filter (not . (c `elem`))
-
 findDigits :: [String] -> [String]
 findDigits xs =
-  let one = head $ fl 2 xs
+  let sixes = fl 6 xs
+      fives = fl 5 xs
+
+      one = head $ fl 2 xs
       four = head $ fl 4 xs
       seven = head $ fl 3 xs
-      a = head $ seven \\ one
-      sixes = fl 6 xs
+      nine = sixes & fs four & head
+      three = fives & fs one & head
       six = head $ sixes \\ fs one sixes
-      c = head $ eight \\ six
-      f = head $ one \\ [c]
-      fives = fl 5 xs
-      two = fives & fmis f & head
-      b = (eight \\ two) \\ [f] & head
-      three = fives & fmis b & fmis e & head
-      five = fl 5 xs & fmis c & head
-      e = head $ (eight \\ five) \\ [c]
-      nine = sixes & fmis e & head
+      five = fives & filter ((== six) . (union six)) & head
+      two = fives \\ [five, three] & head
       zero = sixes \\ [nine, six] & head
   in sort <$> [zero, one, two, three, four, five, six, seven, eight, nine]
 
