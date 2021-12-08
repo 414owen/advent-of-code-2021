@@ -32,4 +32,6 @@ main = do
       (6, 2) -> Ad06.main2
       (7, 1) -> Ad07.main1
       (7, 2) -> Ad07.main2
+      (8, 1) -> Ad08.main1
+      (8, 2) -> Ad08.main2
     _ -> putStrLn "Invalid problem number!"
