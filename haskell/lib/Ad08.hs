@@ -19,18 +19,22 @@ readInput = readFile "input/08"
     (takeWhile (/= "|"))
     (fmap sort . tail . dropWhile (/= "|")))
 
-fl :: Int -> [String] -> [String]
-fl n = filter ((== n) . length)
-
 eight :: String
 eight = ['a'..'g']
 
+-- filter by length
+fl :: Int -> [String] -> [String]
+fl n = filter ((== n) . length)
+
+-- filter by element char
 fc :: Char -> [String] -> [String]
 fc c = filter (c `elem`)
 
+-- filter by string contains
 fs :: String -> [String] -> [String]
 fs = flip $ foldl' $ flip fc
 
+-- filter by missing char
 fmis :: Char -> [String] -> [String]
 fmis c = filter (not . (c `elem`))
 
