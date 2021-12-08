@@ -5,7 +5,6 @@ import Data.List
 import Data.Maybe
 import Data.Function
 import Data.Functor
-import Debug.Trace
 
 type Line = ([String], [String])
 type Input  = [Line]
@@ -58,8 +57,7 @@ solveLine1 :: Line -> Int
 solveLine1 (ins, outs) =
   let l = findMapping ins
       wanted = (l !! 1) : (l !! 4) : (l !! 7) : (l !! 8) : []
-  in
-  length $ filter (`elem` wanted) outs
+  in length $ filter (`elem` wanted) outs
 
 fromDigits' :: [Int] -> Int
 fromDigits' [] = 0
