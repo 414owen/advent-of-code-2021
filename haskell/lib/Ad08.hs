@@ -19,9 +19,6 @@ readInput = readFile "input/08"
     (takeWhile (/= "|"))
     (fmap sort . tail . dropWhile (/= "|")))
 
-eight :: String
-eight = ['a'..'g']
-
 -- filter by length
 fl :: Int -> [String] -> [String]
 fl n = filter ((== n) . length)
@@ -39,6 +36,7 @@ findDigits xs =
   let sixes = fl 6 xs
       fives = fl 5 xs
 
+      eight = ['a'..'g']
       one = head $ fl 2 xs
       four = head $ fl 4 xs
       seven = head $ fl 3 xs
@@ -48,6 +46,7 @@ findDigits xs =
       five = fives & filter ((== six) . (union six)) & head
       two = fives \\ [five, three] & head
       zero = sixes \\ [nine, six] & head
+
   in sort <$> [zero, one, two, three, four, five, six, seven, eight, nine]
 
 solveLine1 :: Line -> Int
