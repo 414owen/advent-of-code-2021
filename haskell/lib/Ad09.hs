@@ -58,12 +58,12 @@ search :: Pt -> Search Int
 search pt@(x, y) = do
   grid <- ask
   seen <- get
-  if | x < 0                       -> pure 0
-     | y < 0                       -> pure 0
-     | y >= V.length grid          -> pure 0
-     | x >= V.length (grid V.! 0)  -> pure 0
-     | (grid V.! y) V.! x == 9     -> pure 0
-     | S.member pt seen            -> pure 0
+  if | x < 0                      -> pure 0
+     | y < 0                      -> pure 0
+     | y >= V.length grid         -> pure 0
+     | x >= V.length (grid V.! 0) -> pure 0
+     | (grid V.! y) V.! x == 9    -> pure 0
+     | S.member pt seen           -> pure 0
      | otherwise -> do
          modify (S.insert pt)
          a <- search (x + 1, y)
