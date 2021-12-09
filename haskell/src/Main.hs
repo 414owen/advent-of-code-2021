@@ -37,4 +37,4 @@ main = do
     ["8", "2"] -> Ad08.main2
     ["9", "1"] -> Ad09.main1
     ["9", "2"] -> Ad09.main2
-    _ -> putStrLn "Invalid problem number!"
+    _          -> putStrLn "Invalid problem number!"
