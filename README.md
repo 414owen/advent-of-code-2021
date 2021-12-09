@@ -16,3 +16,5 @@
 |   7 |    1 |  Haskell |
 |   8 |    0 |  Haskell |
 |   8 |    1 |  Haskell |
+|   9 |    0 |  Haskell |
+|   9 |    1 |  Haskell |
