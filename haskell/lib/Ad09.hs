@@ -48,7 +48,7 @@ solve1 xs = getLows xs
   & sum
 
 zipInds :: [[a]] -> [[((Int, Int), a)]]
-zipInds = zipWith (\y r -> zipWith (\x a -> ((x, y), a)) [0..] r) [0..]
+zipInds xs = [ [ ((x, y), a) | (x, a) <- zip [0..] r ] | (y, r) <- zip [0..] xs ]
 
 type Grid = Vector (Vector Int)
 type Pt = (Int, Int)
