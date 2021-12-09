@@ -5,7 +5,6 @@
 module Ad09 where
 
 import Control.Category ((>>>))
-import Control.Monad
 import Data.List
 import Data.Function
 import Data.Functor
@@ -14,7 +13,6 @@ import qualified Data.Vector as V
 import Data.Set (Set)
 import qualified Data.Set as S
 import Control.Monad.RWS.Strict
-import Debug.Trace
 
 readInput :: IO [[Int]]
 readInput = readFile "input/09"
