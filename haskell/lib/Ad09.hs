@@ -88,7 +88,6 @@ solve2 = getBasins
   >>> \case
     (x : y : z : _) -> x * y * z
 
-
 main1 :: IO ()
 main1 = readInput
   <&> solve1
