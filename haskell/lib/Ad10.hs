@@ -41,17 +41,9 @@ score ']' = 57
 score '}' = 1197
 score '>' = 25137
 
-left :: Either a b -> Maybe a
-left (Left a) = Just a
-left _ = Nothing
-
-right :: Either a b -> Maybe b
-right (Right a) = Just a
-right _ = Nothing
-
 solve1 :: [String] -> Int
 solve1 = corrupteds
-  >>> fmap left
+  >>> fmap (either Just (const Nothing))
   >>> catMaybes
   >>> fmap score
   >>> sum
@@ -69,7 +61,7 @@ score2' (x:xs) = score2 x + 5 * score2' xs
 solve2 :: [String] -> Int
 solve2 xs =
   let l = corrupteds xs
-          & fmap right
+          & fmap (either (const Nothing) Just)
           & catMaybes
           & fmap reverse
           & fmap score2'
