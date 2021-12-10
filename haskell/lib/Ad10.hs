@@ -1,0 +1,88 @@
+module Ad10 where
+
+import Control.Category ((>>>))
+import Control.Monad
+import Data.List
+import Data.Maybe
+import Data.Function
+import Data.Functor
+
+readInput :: IO [String]
+readInput = readFile "input/10"
+  <&> lines
+  <&> (\\ [""])
+
+isClosing :: Char -> Bool
+isClosing = (`elem` ">]})")
+
+match :: Char -> Char -> Bool
+match '(' ')' = True
+match '[' ']' = True
+match '{' '}' = True
+match '<' '>' = True
+match _ _ = False
+
+corrupted :: String -> String -> Either Char String
+corrupted s [] = Right s
+corrupted [] (x:xs)
+  | isClosing x = Left x
+  | otherwise = corrupted [x] xs
+corrupted (y:ys) (x:xs)
+  | isClosing x && match y x = corrupted ys xs
+  | isClosing x = Left x
+  | otherwise = corrupted (x:y:ys) xs
+
+corrupteds :: [String] -> [Either Char String]
+corrupteds = fmap (corrupted "")
+
+score :: Char -> Int
+score ')' = 3
+score ']' = 57
+score '}' = 1197
+score '>' = 25137
+
+left :: Either a b -> Maybe a
+left (Left a) = Just a
+left _ = Nothing
+
+right :: Either a b -> Maybe b
+right (Right a) = Just a
+right _ = Nothing
+
+solve1 :: [String] -> Int
+solve1 = corrupteds
+  >>> fmap left
+  >>> catMaybes
+  >>> fmap score
+  >>> sum
+
+score2 :: Char -> Int
+score2 '(' = 1
+score2 '[' = 2
+score2 '{' = 3
+score2 '<' = 4
+
+score2' :: String -> Int
+score2' [] = 0
+score2' (x:xs) = score2 x + 5 * score2' xs
+
+solve2 :: [String] -> Int
+solve2 xs =
+  let l = corrupteds xs
+          & fmap right
+          & catMaybes
+          & fmap reverse
+          & fmap score2'
+          & sort
+  in l !! (length l `div` 2)
+
+main1 :: IO ()
+main1 = readInput
+  <&> solve1
+  >>= print
+
+main2 :: IO ()
+main2 = readInput
+  <&> solve2
+  >>= print
+
