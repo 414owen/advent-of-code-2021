@@ -77,4 +77,3 @@ main2 :: IO ()
 main2 = readInput
   <&> solve2
   >>= print
-

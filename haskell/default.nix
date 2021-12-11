@@ -1,9 +1,9 @@
-{ mkDerivation, base, lib, containers, mtl, vector }:
+{ mkDerivation, base, lib, containers, mtl, vector, dlist }:
 mkDerivation {
   pname = "advent";
   version = "0.1.0.0";
   src = ./.;
-  libraryHaskellDepends = [ base containers mtl vector ];
+  libraryHaskellDepends = [ base containers mtl vector dlist ];
   testHaskellDepends = [ base ];
   description = "Advent of Code solutions";
   license = lib.licenses.mit;
