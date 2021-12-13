@@ -21,6 +21,7 @@ library
                     , Ad10
                     , Ad11
                     , Ad12
+                    , Ad13
     build-depends:    base ^>=4.14.1.0
                     , containers
                     , mtl

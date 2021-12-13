@@ -17,6 +17,7 @@ import qualified Ad09
 import qualified Ad10
 import qualified Ad11
 import qualified Ad12
+import qualified Ad13
 
 main :: IO ()
 main = do
@@ -46,4 +47,6 @@ main = do
     ["11", "2"] -> Ad11.main2
     ["12", "1"] -> Ad12.main1
     ["12", "2"] -> Ad12.main2
+    ["13", "1"] -> Ad13.main1
+    ["13", "2"] -> Ad13.main2
     _          -> putStrLn "Invalid problem number!"
