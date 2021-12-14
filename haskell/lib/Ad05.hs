@@ -45,7 +45,7 @@ addPt m p = M.alter f p m
     f (Just a) = Just $ a + 1
 
 addLine :: Map Pt Int -> Line -> Map Pt Int
-addLine m l@(p1@(x1, y1), p2@(x2, y2))
+addLine m l@(p1@(x1, y1), p2)
   | p1 == p2 = addPt m (x1, y1)
   | otherwise = addLine (addPt m p1) (approach l)
 

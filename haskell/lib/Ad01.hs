@@ -3,7 +3,6 @@ module Ad01 where
 import Data.Functor
 import Control.Category hiding ((.))
 import Data.Function
-import Data.Foldable
 
 solve1 :: [Int] -> Int
 solve1 xs = zip xs (tail xs)
@@ -14,7 +13,7 @@ increases = fmap (\(a, v) -> if v > a then 1 else 0)
   >>> sum
 
 windows' :: Int -> [a] -> [[a]]
-windows' n [] = []
+windows' _ [] = []
 windows' n xs = take n xs : windows n (tail xs)
 
 windows :: Int -> [a] -> [[a]]

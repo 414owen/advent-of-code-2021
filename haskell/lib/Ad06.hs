@@ -5,11 +5,9 @@ module Ad06 where
 import Control.Category ((>>>))
 import Data.Map (Map)
 import qualified Data.Map as M
-import Data.Char
 import Data.List
 import Data.Function
 import Data.Functor
-import Debug.Trace
 
 count :: Ord a => [a] -> Map a Int
 count [] = mempty
@@ -37,8 +35,8 @@ iter n m = m
   & iter (n - 1)
   where
     iter' :: Map Int Int -> (Int, Int) -> Map Int Int
-    iter' m (0, v) = addSert 8 v $ addSert 6 v m
-    iter' m (n, v) = addSert (n - 1) v m
+    iter' m' (0, v) = addSert 8 v $ addSert 6 v m'
+    iter' m' (n', v) = addSert (n' - 1) v m'
 
 solveN :: Int -> Map Int Int -> Int
 solveN n = iter n

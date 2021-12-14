@@ -1,6 +1,5 @@
 module Ad07 where
 
-import Control.Monad
 import Data.List
 import Data.Function
 import Data.Functor
@@ -18,6 +17,7 @@ solve f l@(x:_)
   where
     fuel :: [Int] -> Int -> Int
     fuel xs target = sum $ (f target) <$> xs
+solve _ _ = error "Not enough input!"
 
 dist :: Int -> Int -> Int
 dist x y = abs (x - y)

@@ -20,22 +20,24 @@ next :: String -> Adj -> [String]
 next node adj = snd <$> filter ((== node) . fst) adj
 
 solve1 :: String -> [String] -> Adj -> Int
-solve1 "end" visited adj = 1
-solve1 node@(x:xs) visited adj
+solve1 "end" _ _ = 1
+solve1 node@(x:_) visited adj
   | isLower x && node `elem` visited = 0
   | otherwise =
       let  nv = if isLower x then node : visited else visited
       in sum $ flip fmap (next node adj) $ \n -> solve1 n nv adj
+solve1 _ _ _ = error "non-totality strikes again!"
 
 solve2 :: String -> [String] -> Bool -> Adj -> Int
-solve2 "end" visited _ _ = 1
+solve2 "end" _ _ _ = 1
 solve2 "start" (_:_) _ _ = 0
-solve2 node@(x:xs) visited twice adj
+solve2 node@(x:_) visited twice adj
   | twice && isLower x && node `elem` visited = 0
   | otherwise =
       let nv = (if isLower x then (node :) else id) visited
           ntwice = twice || isLower x && node `elem` visited
       in sum $ flip fmap (next node adj) $ \n -> solve2 n nv ntwice adj
+solve2 _ _ _ _ = error "non-totality strikes again!"
 
 preprocess :: [(String, String)] -> [(String, String)]
 preprocess = ap (<>) (fmap swap)

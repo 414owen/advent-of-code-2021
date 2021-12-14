@@ -5,7 +5,6 @@ module Ad04 where
 import Control.Category ((>>>))
 import Data.Maybe
 import Data.List
-import Data.Function
 import Data.Functor
 
 type Board = [[Maybe Int]]
@@ -23,9 +22,10 @@ readInput = readFile "input/04"
       ( read ("[" <> nums <> "]")
       , readBoards $ (fmap (Just . read) . words) <$> boards
       )
+    _ -> error "Couldn't parse input"
 
 markCell :: Int -> Maybe Int -> Maybe Int
-markCell x Nothing = Nothing
+markCell _ Nothing = Nothing
 markCell x (Just a)
   | x == a = Nothing
   | otherwise = Just a
@@ -54,7 +54,7 @@ score = mconcat
   >>> sum
 
 solve1 :: [Int] -> [Board] -> Int
-solve1 [] bs = error "no winner"
+solve1 [] _ = error "no winner"
 solve1 (x:xs) bs =
   let bs' = markAll x bs
   in case winner bs' of

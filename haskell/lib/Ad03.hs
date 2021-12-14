@@ -2,7 +2,6 @@ module Ad03 where
 
 import Data.Char (digitToInt)
 import Data.List
-import Data.Function
 import Data.Functor
 
 toDec :: String -> Int
@@ -29,7 +28,7 @@ epsilon (cs:xs)
   | otherwise = '1' : epsilon xs
 
 ox :: Int -> [String] -> String
-ox n [x] = x
+ox _ [x] = x
 ox n xs = let
   t = transpose xs
   c = gamma t !! n
@@ -37,7 +36,7 @@ ox n xs = let
   in ox (n + 1) ys
 
 co2 :: Int -> [String] -> String
-co2 n [x] = x
+co2 _ [x] = x
 co2 n xs = let
   t = transpose xs
   c = epsilon t !! n

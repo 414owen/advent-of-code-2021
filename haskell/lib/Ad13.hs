@@ -2,13 +2,10 @@
 
 module Ad13 where
 
-import Control.Category ((>>>))
 import Control.Arrow
-import Control.Monad
 import Data.List
 import Data.Bifunctor
 import Data.Functor
-import Debug.Trace
 
 type Pt = (Int, Int)
 data Fold = X Int | Y Int
@@ -23,6 +20,7 @@ readFold = dropWhile (not . (`elem` "xy"))
   >>> \case
     ("x=", n) -> X $ read n
     ("y=", n) -> Y $ read n
+    _ -> error "bad input"
 
 readInput :: IO ([Pt], [Fold])
 readInput = readFile "input/13"
@@ -37,6 +35,7 @@ makeFold pts (Y y') = fmap (\(x, y) -> (x, if y > y' then y' - (y - y') else y))
 
 solve1 :: [Pt] -> [Fold] -> Int
 solve1 pts (f:_) = length $ nub $ makeFold pts f
+solve1 _ _ = error "Expected at least one fold..."
 
 solve2 :: [Pt] -> [Fold] -> [Pt]
 solve2 pts fs = nub $ foldl' makeFold pts fs

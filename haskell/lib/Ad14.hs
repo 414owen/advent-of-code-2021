@@ -3,12 +3,9 @@
 module Ad14 where
 
 import Control.Arrow
-import Control.Monad
 import Data.Function
 import Data.Maybe
 import Data.List
-import Data.Tuple
-import Data.Char
 import Data.Functor
 
 type Path = ((Char, Char), Char)
@@ -16,9 +13,10 @@ type Input = (String, [Path])
 
 readPath :: String -> Path
 readPath (c1 : c2 : ' ' : '-' : '>' : ' ' : c3 : []) = ((c1, c2), c3)
+readPath _ = error "bad input"
 
 windows' :: Int -> [a] -> [[a]]
-windows' n [] = []
+windows' _ [] = []
 windows' n xs = take n xs : windows n (tail xs)
 
 windows :: Int -> [a] -> [[a]]

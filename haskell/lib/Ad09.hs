@@ -23,6 +23,7 @@ readInput = readFile "input/09"
 rowLow :: [Int] -> [Bool]
 rowLow [x1, x2, x3] = [x1 < x2, x2 < x1 && x2 < x3, x3 < x2]
 rowLow (x1 : x2 : x3 : xs) = (x1 < x2) : (x2 < x1 && x2 < x3) : tail (rowLow (x2 : x3 : xs))
+rowLow _ = error "Not enough row!"
 
 horLow :: [[Int]] -> [[Bool]]
 horLow m = fmap rowLow m
@@ -85,6 +86,7 @@ solve2 = getBasins
   >>> reverse
   >>> \case
     (x : y : z : _) -> x * y * z
+    _ -> error "Not enough basins!"
 
 main1 :: IO ()
 main1 = readInput

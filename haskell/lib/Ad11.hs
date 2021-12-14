@@ -8,9 +8,6 @@ import Control.Monad.Writer.Strict
 import Control.Monad.Reader
 import Data.DList (DList)
 import qualified Data.DList as DL
-import Data.List
-import Data.Monoid
-import Data.Function
 import Data.Functor
 import Data.Vector (Vector, MVector)
 import qualified Data.Vector as V
@@ -59,7 +56,7 @@ step = do
   grid <- ask
   toZero <- fmap DL.toList $ execWriterT $
     forM2 [0..9] [0..9] $ \x y -> inc x y
-  forM toZero $ \(x, y) -> do
+  forM_ toZero $ \(x, y) -> do
      row <- MV.read grid y
      MV.write row x 0
   pure $ length toZero
@@ -68,7 +65,7 @@ solve1 :: Grid -> Int
 solve1 grid = runST $ do
   g <- V.thaw =<< traverse V.thaw grid
   fmap sum $ flip runReaderT g
-    $ forM [1..100]
+    $ forM [(1::Int)..100]
     $ const step
 
 solve2 :: Grid -> Int

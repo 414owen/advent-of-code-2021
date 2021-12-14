@@ -1,7 +1,6 @@
 module Ad10 where
 
 import Control.Category ((>>>))
-import Control.Monad
 import Data.List
 import Data.Maybe
 import Data.Function
@@ -40,6 +39,7 @@ score ')' = 3
 score ']' = 57
 score '}' = 1197
 score '>' = 25137
+score _ = error "Unknown bracket!"
 
 solve1 :: [String] -> Int
 solve1 = corrupteds
@@ -53,6 +53,7 @@ score2 '(' = 1
 score2 '[' = 2
 score2 '{' = 3
 score2 '<' = 4
+score2 _ = error "Unknown bracket!"
 
 score2' :: String -> Int
 score2' [] = 0
