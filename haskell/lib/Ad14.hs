@@ -64,7 +64,8 @@ solve iters (start, paths) =
       end = chains paths occs !! iters
       counts = addOcc (head start, 1)
         $ addOcc (last start, 1)
-        $ foldl' (flip addOcc) [] ((end >>= \((c1, c2), c) -> (,c) <$> [c1, c2]) :: [Occ Char])
+        $ foldl' (flip addOcc) []
+        $ end >>= \((c1, c2), c) -> (,c) <$> [c1, c2]
       ma = maximum $ snd <$> counts
       mi = minimum $ snd <$> counts
   in (ma `div` 2) - (mi `div` 2)
