@@ -52,4 +52,33 @@ main = do
     ["13", "2"] -> Ad13.main2
     ["14", "1"] -> Ad14.main1
     ["14", "2"] -> Ad14.main2
+    ["all"] -> do
+      Ad01.main1
+      Ad01.main2
+      Ad02.main1
+      Ad02.main2
+      Ad03.main1
+      Ad03.main2
+      Ad04.main1
+      Ad04.main2
+      Ad05.main1
+      Ad05.main2
+      Ad06.main1
+      Ad06.main2
+      Ad07.main1
+      Ad07.main2
+      Ad08.main1
+      Ad08.main2
+      Ad09.main1
+      Ad09.main2
+      Ad10.main1
+      Ad10.main2
+      Ad11.main1
+      Ad11.main2
+      Ad12.main1
+      Ad12.main2
+      Ad13.main1
+      Ad13.main2
+      Ad14.main1
+      Ad14.main2
     _          -> putStrLn "Invalid problem number!"
