@@ -2,7 +2,6 @@
 
 module Main where
 
-import Text.Read
 import System.Environment
 
 import qualified Ad01
