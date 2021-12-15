@@ -12,35 +12,34 @@ import qualified Data.Vector.Mutable as MV
 import Control.Monad.Reader
 import Control.Monad.ST
 
-type Input = (Vector (Vector Int))
+type Input = [[Int]]
+type VInput = Vector (Vector Int)
 
 readInput :: IO Input
 readInput = readFile "input/15"
   <&> lines
   <&> filter (/= "")
   <&> fmap (fmap (read . (:[])))
-  <&> fmap V.fromList
-  <&> V.fromList
 
 type MGrid s = Vector (MVector s Int)
-type M s a = ReaderT (Input, MGrid s) (ST s) a
+type M s a = ReaderT (VInput, MGrid s) (ST s) a
 
 search :: Int -> Int -> Int -> M s ()
 search x y risk = do
   (grid, state) <- ask
   let h = V.length grid
   let w = V.length (V.head grid)
-  best <- state V.! (h-1) `MV.read` (w-1)
   if | x < 0  -> pure ()
      | y < 0  -> pure ()
      | y >= h -> pure ()
      | x >= w -> pure ()
-     | risk >= best -> pure ()
      | otherwise -> do
          let row = state V.! y
-         cell <- row `MV.read` x
          let myrisk = risk + grid V.! y V.! x
+         best <- state V.! (h-1) `MV.read` (w-1)
+         cell <- row `MV.read` x
          if | myrisk >= cell -> pure ()
+            | myrisk >= best -> pure ()
             | otherwise -> do
                 MV.write row x myrisk
                 search (x + 1) y myrisk
@@ -48,7 +47,7 @@ search x y risk = do
                 search (x - 1) y myrisk
                 search x (y - 1) myrisk
 
-solve :: Input -> Int
+solve :: VInput -> Int
 solve grid =
   let h = V.length grid
       w = V.length (V.head grid)
@@ -60,6 +59,8 @@ solve grid =
 
 main1 :: IO ()
 main1 = readInput
+  <&> fmap V.fromList
+  <&> V.fromList
   <&> solve
   >>= print
 
@@ -67,26 +68,17 @@ add :: (Functor f, Functor g, Integral a) => f (g a) -> a -> f (g a)
 add grid n = fmap ((+ 1) . (`mod` 9) . (\a -> a - 1) . (+ n)) <$> grid
 
 construct :: Input -> Input
-construct grid
-  = grid
-  & V.toList
-  & fmap V.toList
-  & \grid' -> add grid' <$> [0..4]
-    & concat
-    & transpose
-    & (\g -> add g <$> [0..4])
-    & concat
-    & transpose
-    & fmap V.fromList
-    & V.fromList
+construct grid = add grid <$> [0..4]
+  & concat
+  & transpose
+  & (\g -> add g <$> [0..4])
+  & concat
+  & transpose
 
 main2 :: IO ()
 main2 = readInput
   <&> construct
+  <&> fmap V.fromList
+  <&> V.fromList
   <&> solve
   >>= print
-  -- <&> fmap V.toList
-  -- <&> V.toList
-  -- <&> fmap (fmap show)
-  -- <&> fmap (concat)
-  -- >>= mapM_ putStrLn
