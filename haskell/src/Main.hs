@@ -19,6 +19,7 @@ import qualified Ad11
 import qualified Ad12
 import qualified Ad13
 import qualified Ad14
+import qualified Ad15
 
 main :: IO ()
 main = do
@@ -52,6 +53,8 @@ main = do
     ["13", "2"] -> Ad13.main2
     ["14", "1"] -> Ad14.main1
     ["14", "2"] -> Ad14.main2
+    ["15", "1"] -> Ad15.main1
+    ["15", "2"] -> Ad15.main2
     ["all"] -> do
       Ad01.main1
       Ad01.main2
