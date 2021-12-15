@@ -1,0 +1,3 @@
+*.nix linguist-vendored
+nix/ linguist-vendored
+* text=auto
