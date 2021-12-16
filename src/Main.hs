@@ -2,7 +2,12 @@
 
 module Main where
 
+import Criterion.Measurement
+import Criterion.Measurement.Types
 import System.Environment
+import System.IO
+import Text.Read
+import Data.Functor
 
 import qualified Ad01
 import qualified Ad02
@@ -19,68 +24,66 @@ import qualified Ad12
 import qualified Ad13
 import qualified Ad14
 import qualified Ad15
+import qualified Ad16
+
+time' :: Handle -> (Int, IO ()) -> IO ()
+time' h (n, f) = do
+  (_, t) <- runBenchmark (nfIO f) 1
+  hPutStrLn h (show n <> " " <> show t)
+
+solutions :: [IO ()]
+solutions =
+  [ Ad01.main1
+  , Ad01.main2
+  , Ad02.main1
+  , Ad02.main2
+  , Ad03.main1
+  , Ad03.main2
+  , Ad04.main1
+  , Ad04.main2
+  , Ad05.main1
+  , Ad05.main2
+  , Ad06.main1
+  , Ad06.main2
+  , Ad07.main1
+  , Ad07.main2
+  , Ad08.main1
+  , Ad08.main2
+  , Ad09.main1
+  , Ad09.main2
+  , Ad10.main1
+  , Ad10.main2
+  , Ad11.main1
+  , Ad11.main2
+  , Ad12.main1
+  , Ad12.main2
+  , Ad13.main1
+  , Ad13.main2
+  , Ad14.main1
+  , Ad14.main2
+  , Ad15.main1
+  , Ad15.main2
+  , Ad16.main1
+  , Ad16.main2
+  ]
+
+isBenchLine :: String -> Bool
+isBenchLine _ = True
+
+latest :: IO Int
+latest = readFile "README.md"
+  <&> lines
+  <&> filter (/= "")
+  <&> filter isBenchLine
+  <&> length
 
 main :: IO ()
 main = do
   args <- getArgs
   case args of
-    ["1", "1"] -> Ad01.main1
-    ["1", "2"] -> Ad01.main2
-    ["2", "1"] -> Ad02.main1
-    ["2", "2"] -> Ad02.main2
-    ["3", "1"] -> Ad03.main1
-    ["3", "2"] -> Ad03.main2
-    ["4", "1"] -> Ad04.main1
-    ["4", "2"] -> Ad04.main2
-    ["5", "1"] -> Ad05.main1
-    ["5", "2"] -> Ad05.main2
-    ["6", "1"] -> Ad06.main1
-    ["6", "2"] -> Ad06.main2
-    ["7", "1"] -> Ad07.main1
-    ["7", "2"] -> Ad07.main2
-    ["8", "1"] -> Ad08.main1
-    ["8", "2"] -> Ad08.main2
-    ["9", "1"] -> Ad09.main1
-    ["9", "2"] -> Ad09.main2
-    ["10", "1"] -> Ad10.main1
-    ["10", "2"] -> Ad10.main2
-    ["11", "1"] -> Ad11.main1
-    ["11", "2"] -> Ad11.main2
-    ["12", "1"] -> Ad12.main1
-    ["12", "2"] -> Ad12.main2
-    ["13", "1"] -> Ad13.main1
-    ["13", "2"] -> Ad13.main2
-    ["14", "1"] -> Ad14.main1
-    ["14", "2"] -> Ad14.main2
-    ["15", "1"] -> Ad15.main1
-    ["15", "2"] -> Ad15.main2
     ["all"] -> do
-      Ad01.main1
-      Ad01.main2
-      Ad02.main1
-      Ad02.main2
-      Ad03.main1
-      Ad03.main2
-      Ad04.main1
-      Ad04.main2
-      Ad05.main1
-      Ad05.main2
-      Ad06.main1
-      Ad06.main2
-      Ad07.main1
-      Ad07.main2
-      Ad08.main1
-      Ad08.main2
-      Ad09.main1
-      Ad09.main2
-      Ad10.main1
-      Ad10.main2
-      Ad11.main1
-      Ad11.main2
-      Ad12.main1
-      Ad12.main2
-      Ad13.main1
-      Ad13.main2
-      Ad14.main1
-      Ad14.main2
+      out <- openFile "README.md" WriteMode
+      l <- latest
+      mapM_ (time' out) $ drop l $ zip [0..] solutions
+    ([readMaybe -> Just n, readMaybe -> Just m]) -> solutions !! ((n - 1) * 2 + m - 1)
     _          -> putStrLn "Invalid problem number!"
