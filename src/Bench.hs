@@ -1,11 +1,7 @@
-{-# LANGUAGE ViewPatterns #-}
-
 module Main where
 
 import Criterion
 import Criterion.Main
-import System.Environment
-import Text.Read
 import Data.Functor
 
 import qualified Ad01
@@ -61,9 +57,12 @@ solutions =
   , Ad16.main2
   ]
 
+name :: (Int, Int) -> String
+name (d, p) = "Day " <> show (d + 1) <> ", Part " <> show (p + 1)
+
 benches :: [Benchmark]
-benches = zip [0..] solutions
-  <&> (\(n, io) -> bench (show $ n `divMod` 2) (nfIO io))
+benches = zip [0 :: Int ..] solutions
+  <&> (\(n, io) -> bench (name $ n `divMod` 2) (nfIO io))
 
 isBenchLine :: String -> Bool
 isBenchLine _ = True
@@ -76,15 +75,4 @@ latest = readFile "README.md"
   <&> length
 
 main :: IO ()
-main = do
-  args <- getArgs
-  case args of
-    ["bench"] -> defaultMain benches
-
-      -- out <- openFile "BENCH.txt" WriteMode
-      -- l <- latest
-      -- mapM_ (time' out) $ drop l $ zip [0..] solutions
-      -- hFlush out
-      -- hClose out
-    [readMaybe -> Just n, readMaybe -> Just m] -> solutions !! ((n - 1) * 2 + m - 1)
-    _          -> putStrLn "Invalid problem number!"
+main = defaultMain benches

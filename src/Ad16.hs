@@ -4,7 +4,6 @@ module Ad16 (main1, main2) where
 
 import Control.Arrow
 import Data.Bits (shift)
-import Data.Functor
 import Data.List
 import Numeric (readHex)
 import Text.Printf (printf)
@@ -110,8 +109,8 @@ sumVersions (Packet{version, packetData} : xs)
 
 eval :: Packet -> Int
 eval Packet{packetData = Literal a} = a
-eval Packet{packetData = Operator op subs} =
-  case (op, fmap eval subs) of
+eval Packet{packetData = Operator op subs'} =
+  case (op, fmap eval subs') of
     (Sum, subs) -> sum subs
     (Prod, subs) -> product subs
     (Min, subs) -> minimum subs

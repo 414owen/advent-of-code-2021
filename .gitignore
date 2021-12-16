@@ -1,2 +1,5 @@
 .direnv/
 dist*
+*.csv
+*.html
+*.txt
