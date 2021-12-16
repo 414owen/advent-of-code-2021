@@ -2,6 +2,7 @@
 
 module Ad15 (main1, main2) where
 
+import Control.Category ((>>>))
 import Data.List
 import Data.Function
 import Data.Functor
@@ -53,16 +54,17 @@ solve grid =
       w = V.length (V.head grid)
   in runST $ do
     state <- V.replicateM h $ MV.replicate w maxBound
-    runReaderT (search 0 0 (0 - (grid V.! 0 V.! 0))) (grid, state)
+    runReaderT (search 0 0 (negate $ grid V.! 0 V.! 0)) (grid, state)
     m <- traverse V.freeze state
     pure $ m V.! (h-1) V.! (w-1)
 
 main1 :: IO ()
-main1 = readInput
-  <&> fmap V.fromList
-  <&> V.fromList
-  <&> solve
-  >>= print
+main1 = readInput >>=
+  (   fmap V.fromList
+  >>> V.fromList
+  >>> solve
+  >>> print
+  )
 
 add :: (Functor f, Functor g, Integral a) => f (g a) -> a -> f (g a)
 add grid n = fmap ((+ 1) . (`mod` 9) . (\a -> a - 1) . (+ n)) <$> grid
@@ -76,9 +78,10 @@ construct grid = add grid <$> [0..4]
   & transpose
 
 main2 :: IO ()
-main2 = readInput
-  <&> construct
-  <&> fmap V.fromList
-  <&> V.fromList
-  <&> solve
-  >>= print
+main2 = readInput >>=
+  (   construct
+  >>> fmap V.fromList
+  >>> V.fromList
+  >>> solve
+  >>> print
+  )

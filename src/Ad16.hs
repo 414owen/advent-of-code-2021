@@ -1,5 +1,4 @@
 {-# LANGUAGE NamedFieldPuns #-}
-{-# LANGUAGE ViewPatterns #-}
 
 module Ad16 (main1, main2) where
 
@@ -32,8 +31,7 @@ hexToBin c
       _       -> []
 
 transform :: String -> [Bool]
-transform (x:xs) = fmap (== '1') (hexToBin x) <> transform xs
-transform [] = []
+transform = foldr ((<>) . fmap (== '1') . hexToBin) []
 
 binToInt :: [Bool] -> Int
 binToInt = foldl' step 0
@@ -45,7 +43,7 @@ parseLiteral :: Int -> [Bool] -> (PacketData, [Bool])
 parseLiteral n (notEnd : a1 : a2 : a3 : a4 : xs)
   = let n' = n * 16 + binToInt [a1, a2, a3, a4]
     in if notEnd
-      then (parseLiteral n' xs)
+      then parseLiteral n' xs
       else (Literal n', xs)
 parseLiteral _ _ = error "Bad literal packet"
 
@@ -135,11 +133,7 @@ solve2 = transform
   >>> eval
 
 main1 :: IO ()
-main1 = readInput
-  <&> solve1
-  >>= print
+main1 = readInput >>= print . solve1
 
 main2 :: IO ()
-main2 = readInput
-  <&> solve2
-  >>= print
+main2 = readInput >>= print . solve2

@@ -41,7 +41,7 @@ findDigits xs =
       two = fives \\ [five, three] & head
       three = fives & fs one & head
       four = head $ fl 4 xs
-      five = fives & find ((== six) . (union six)) & fromJust
+      five = fives & find ((== six) . union six) & fromJust
       six = head $ sixes \\ fs one sixes
       seven = head $ fl 3 xs
       eight = ['a'..'g']
@@ -52,7 +52,7 @@ findDigits xs =
 solveLine1 :: Line -> Int
 solveLine1 (ins, outs) =
   let l = findDigits ins
-      wanted = (l !! 1) : (l !! 4) : (l !! 7) : (l !! 8) : []
+      wanted = [l !! 1, l !! 4, l !! 7, l !! 8]
   in length $ filter (`elem` wanted) outs
 
 fromDigits' :: [Int] -> Int
@@ -75,11 +75,7 @@ solve2 :: Input -> Output
 solve2 = sum . fmap solveLine2
 
 main1 :: IO ()
-main1 = readInput
-  <&> solve1
-  >>= print
+main1 = readInput >>= print . solve1
 
 main2 :: IO ()
-main2 = readInput
-  <&> solve2
-  >>= print
+main2 = readInput >>= print . solve2

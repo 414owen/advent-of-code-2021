@@ -58,12 +58,7 @@ solve1 l =
   in toDec g * toDec e
 
 main1 :: IO ()
-main1 = readInput
-  <&> transpose
-  <&> solve1
-  >>= print
+main1 = readInput >>= print . solve1 . transpose
 
 main2 :: IO ()
-main2 = readInput
-  <&> solve2
-  >>= print
+main2 = readInput >>= print . solve2

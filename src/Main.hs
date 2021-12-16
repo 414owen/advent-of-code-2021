@@ -82,8 +82,8 @@ main = do
   args <- getArgs
   case args of
     ["all"] -> do
-      out <- openFile "README.md" WriteMode
+      out <- openFile "BENCH.txt" WriteMode
       l <- latest
       mapM_ (time' out) $ drop l $ zip [0..] solutions
-    ([readMaybe -> Just n, readMaybe -> Just m]) -> solutions !! ((n - 1) * 2 + m - 1)
+    [readMaybe -> Just n, readMaybe -> Just m] -> solutions !! ((n - 1) * 2 + m - 1)
     _          -> putStrLn "Invalid problem number!"

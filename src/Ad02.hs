@@ -35,9 +35,7 @@ solve1 :: [Instruction] -> Int
 solve1 = uncurry (*) . foldl' follow1 (0, 0)
 
 main1 :: IO ()
-main1 = readInput
-  <&> solve1
-  >>= print
+main1 = readInput >>= print . solve1
 
 follow2 :: (Int, Int, Int) -> Instruction -> (Int, Int, Int)
 follow2 (aim, depth, x) = \case
@@ -50,6 +48,4 @@ solve2 insts = foldl' follow2 (0, 0, 0) insts & \case
   (_, d, p) -> d * p
 
 main2 :: IO ()
-main2 = readInput
-  <&> solve2
-  >>= print
+main2 = readInput >>= print . solve2

@@ -16,7 +16,7 @@ solve f l@(x:_)
   & foldl' min (fuel l x)
   where
     fuel :: [Int] -> Int -> Int
-    fuel xs target = sum $ (f target) <$> xs
+    fuel xs target = sum $ f target <$> xs
 solve _ _ = error "Not enough input!"
 
 dist :: Int -> Int -> Int
@@ -35,11 +35,7 @@ solve2 :: [Int] -> Int
 solve2 = solve sumToDist
 
 main1 :: IO ()
-main1 = readInput
-  <&> solve1
-  >>= print
+main1 = readInput >>= print . solve1
 
 main2 :: IO ()
-main2 = readInput
-  <&> solve2
-  >>= print
+main2 = readInput >>= print . solve2

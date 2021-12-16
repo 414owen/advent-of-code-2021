@@ -62,19 +62,14 @@ score2' (x:xs) = score2 x + 5 * score2' xs
 solve2 :: [String] -> Int
 solve2 xs =
   let l = corrupteds xs
-          & fmap (either (const Nothing) Just)
+          <&> either (const Nothing) Just
           & catMaybes
-          & fmap reverse
-          & fmap score2'
+          & fmap (score2' . reverse)
           & sort
   in l !! (length l `div` 2)
 
 main1 :: IO ()
-main1 = readInput
-  <&> solve1
-  >>= print
+main1 = readInput >>= print . solve1
 
 main2 :: IO ()
-main2 = readInput
-  <&> solve2
-  >>= print
+main2 = readInput >>= print . solve2

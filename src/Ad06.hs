@@ -1,5 +1,3 @@
-{-# LANGUAGE ViewPatterns #-}
-
 module Ad06 where
 
 import Control.Category ((>>>))
@@ -50,11 +48,7 @@ solve2 :: Map Int Int -> Int
 solve2 = solveN 256
 
 main1 :: IO ()
-main1 = readInput
-  <&> solve1
-  >>= print
+main1 = readInput >>= print . solve1
 
 main2 :: IO ()
-main2 = readInput
-  <&> solve2
-  >>= print
+main2 = readInput >>= print . solve2

@@ -12,7 +12,7 @@ data Fold = X Int | Y Int
   deriving Show
 
 readPt :: String -> Pt
-readPt = bimap (read) (read . tail) . break (== ',')
+readPt = bimap read (read . tail) . break (== ',')
 
 readFold :: String -> Fold
 readFold = dropWhile (not . (`elem` "xy"))
@@ -41,11 +41,7 @@ solve2 :: [Pt] -> [Fold] -> [Pt]
 solve2 pts fs = nub $ foldl' makeFold pts fs
 
 main1 :: IO ()
-main1 = readInput
-  <&> uncurry solve1
-  >>= print
+main1 = readInput >>= print . uncurry solve1
 
 main2 :: IO ()
-main2 = readInput
-  <&> uncurry solve2
-  >>= print
+main2 = readInput >>= print . uncurry solve2

@@ -1,5 +1,3 @@
-{-# LANGUAGE MultiWayIf #-}
-
 module Ad12 where
 
 import Control.Arrow
@@ -43,13 +41,15 @@ preprocess :: [(String, String)] -> [(String, String)]
 preprocess = ap (<>) (fmap swap)
 
 main1 :: IO ()
-main1 = readInput
-  <&> preprocess
-  <&> solve1 "start" []
-  >>= print
+main1 = readInput >>=
+  (   preprocess
+  >>> solve1 "start" []
+  >>> print
+  )
 
 main2 :: IO ()
-main2 = readInput
-  <&> preprocess
-  <&> solve2 "start" [] False
-  >>= print
+main2 = readInput >>=
+  (   preprocess
+  >>> solve2 "start" [] False
+  >>> print
+  )

@@ -1,5 +1,3 @@
-{-# LANGUAGE ViewPatterns #-}
-
 module Ad05 where
 
 import Control.Category ((>>>))
@@ -41,7 +39,7 @@ approach ((x1, y1), (x2, y2))
 addPt :: Map Pt Int -> Pt -> Map Pt Int
 addPt m p = M.alter f p m
   where
-    f (Nothing) = Just 1
+    f Nothing = Just 1
     f (Just a) = Just $ a + 1
 
 addLine :: Map Pt Int -> Line -> Map Pt Int
@@ -59,13 +57,8 @@ isStraight :: Line -> Bool
 isStraight ((x1, y1), (x2, y2)) = x1 == x2 || y1 == y2
 
 main1 :: IO ()
-main1 = readInput
-  <&> filter isStraight
-  <&> solve
-  >>= print
+main1 = readInput >>= print . solve . filter isStraight
 
 main2 :: IO ()
-main2 = readInput
-  <&> solve
-  >>= print
+main2 = readInput >>= print . solve
 

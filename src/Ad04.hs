@@ -20,7 +20,7 @@ readInput = readFile "input/04"
   <&> \case
     (nums : boards) ->
       ( read ("[" <> nums <> "]")
-      , readBoards $ (fmap (Just . read) . words) <$> boards
+      , readBoards $ fmap (Just . read) . words <$> boards
       )
     _ -> error "Couldn't parse input"
 
@@ -34,7 +34,7 @@ mark :: Int -> Board -> Board
 mark n bs = fmap (markCell n) <$> bs
 
 markAll :: Int -> [Board] -> [Board]
-markAll x bs = fmap (mark x) bs
+markAll x = fmap (mark x)
 
 hasWon' :: Board -> Bool
 hasWon' = any (all (== Nothing))
@@ -73,11 +73,7 @@ solve2 (x:xs) bs =
 solve2 _ _ = error "no last winner"
 
 main1 :: IO ()
-main1 = readInput
-  <&> uncurry solve1
-  >>= print
+main1 = readInput >>= print . uncurry solve1
 
 main2 :: IO ()
-main2 = readInput
-  <&> uncurry solve2
-  >>= print
+main2 = readInput >>= print . uncurry solve2

@@ -24,7 +24,7 @@ readInput = readFile "input/11"
   <&> V.fromList
   <&> fmap V.fromList
 
-type M s a = WriterT (DList (Int, Int)) (ReaderT (MGrid s) ((ST s))) a
+type M s a = WriterT (DList (Int, Int)) (ReaderT (MGrid s) (ST s)) a
 
 forM2 :: Monad m => [a] -> [b] -> (a -> b -> m c) -> m [[c]]
 forM2 l1 l2 f = forM l1 $ \a -> forM l2 $ \b -> f a b
@@ -82,11 +82,7 @@ solve2 grid = runST $ do
         else rec $ n + 1
 
 main1 :: IO ()
-main1 = readInput
-  <&> solve1
-  >>= print
+main1 = readInput >>= print . solve1
 
 main2 :: IO ()
-main2 = readInput
-  <&> solve2
-  >>= print
+main2 = readInput >>= print . solve2

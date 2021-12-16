@@ -1,4 +1,3 @@
-{-# LANGUAGE TupleSections #-}
 {-# LANGUAGE MultiWayIf #-}
 {-# LANGUAGE LambdaCase #-}
 
@@ -26,7 +25,7 @@ rowLow (x1 : x2 : x3 : xs) = (x1 < x2) : (x2 < x1 && x2 < x3) : tail (rowLow (x2
 rowLow _ = error "Not enough row!"
 
 horLow :: [[Int]] -> [[Bool]]
-horLow m = fmap rowLow m
+horLow = fmap rowLow
 
 getLows :: [[Int]] -> [[Bool]]
 getLows m =
@@ -89,11 +88,7 @@ solve2 = getBasins
     _ -> error "Not enough basins!"
 
 main1 :: IO ()
-main1 = readInput
-  <&> solve1
-  >>= print
+main1 = readInput >>= print . solve1
 
 main2 :: IO ()
-main2 = readInput
-  <&> solve2
-  >>= print
+main2 = readInput >>= print . solve2

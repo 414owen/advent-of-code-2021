@@ -12,7 +12,7 @@ type Path = ((Char, Char), Char)
 type Input = (String, [Path])
 
 readPath :: String -> Path
-readPath (c1 : c2 : ' ' : '-' : '>' : ' ' : c3 : []) = ((c1, c2), c3)
+readPath [c1, c2, ' ', '-', '>', ' ', c3] = ((c1, c2), c3)
 readPath _ = error "bad input"
 
 windows' :: Int -> [a] -> [[a]]
@@ -77,11 +77,7 @@ solve2 :: Input -> Int
 solve2 = solve 40
 
 main1 :: IO ()
-main1 = readInput
-  <&> solve1
-  >>= print
+main1 = readInput >>= print . solve1
 
 main2 :: IO ()
-main2 = readInput
-  <&> solve2
-  >>= print
+main2 = readInput >>= print . solve2
