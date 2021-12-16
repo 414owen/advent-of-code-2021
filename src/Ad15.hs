@@ -43,8 +43,13 @@ search x y risk = do
             | myrisk >= best -> pure ()
             | otherwise -> do
                 MV.write row x myrisk
-                search (x + 1) y myrisk
-                search x (y + 1) myrisk
+                if x > y
+                  then do
+                    search x (y + 1) myrisk
+                    search (x + 1) y myrisk
+                  else do
+                    search (x + 1) y myrisk
+                    search x (y + 1) myrisk
                 search (x - 1) y myrisk
                 search x (y - 1) myrisk
 
