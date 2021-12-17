@@ -1,8 +1,11 @@
 {-# LANGUAGE MultiWayIf #-}
+{-# LANGUAGE ViewPatterns #-}
 
 module Ad15 (main1, main2) where
 
 import Control.Category ((>>>))
+import Data.Set (Set)
+import qualified Data.Set as S
 import Data.List
 import Data.Function
 import Data.Functor
@@ -12,9 +15,11 @@ import Data.Vector.Mutable (MVector)
 import qualified Data.Vector.Mutable as MV
 import Control.Monad.Reader
 import Control.Monad.ST
+import Debug.Trace
 
 type Input = [[Int]]
 type VInput = Vector (Vector Int)
+type Pt = (Int, Int)
 
 readInput :: IO Input
 readInput = readFile "input/15"
@@ -25,33 +30,40 @@ readInput = readFile "input/15"
 type MGrid s = Vector (MVector s Int)
 type M s a = ReaderT (VInput, MGrid s) (ST s) a
 
-search :: Int -> Int -> Int -> M s ()
-search x y risk = do
+newtype Elem = Elem (Int, Int, Int)
+  deriving Eq
+type Heap = Set Elem
+
+instance Ord Elem where
+  compare (Elem e1@(a, b, c)) (Elem e2@(d, e, f))
+    | a == d = compare ((e + f), e, f) ((b + c), b, c)
+    | otherwise = compare e1 e2
+
+search :: Heap -> M s Int
+search heap = do
+  let Elem ((risk, x, y)) = S.findMin heap
+  let heap' = S.deleteMin heap
   (grid, state) <- ask
   let h = V.length grid
   let w = V.length (V.head grid)
-  if | x < 0  -> pure ()
-     | y < 0  -> pure ()
-     | y >= h -> pure ()
-     | x >= w -> pure ()
+  if | x < 0  -> search heap'
+     | y < 0  -> search heap'
+     | y >= h -> search heap'
+     | x >= w -> search heap'
      | otherwise -> do
          let row = state V.! y
          let myrisk = risk + grid V.! y V.! x
-         best <- state V.! (h-1) `MV.read` (w-1)
          cell <- row `MV.read` x
-         if | myrisk >= cell -> pure ()
-            | myrisk >= best -> pure ()
+         if | myrisk >= cell -> search heap'
+            | (w-1, h-1) == (x, y) -> pure myrisk
             | otherwise -> do
                 MV.write row x myrisk
-                if x > y
-                  then do
-                    search x (y + 1) myrisk
-                    search (x + 1) y myrisk
-                  else do
-                    search (x + 1) y myrisk
-                    search x (y + 1) myrisk
-                search (x - 1) y myrisk
-                search x (y - 1) myrisk
+                let nh = S.insert (Elem (myrisk, x, y + 1))
+                       $ S.insert (Elem (myrisk, x, y - 1))
+                       $ S.insert (Elem (myrisk, x + 1, y))
+                       $ S.insert (Elem (myrisk, x - 1, y))
+                       $ heap'
+                search nh
 
 solve :: VInput -> Int
 solve grid =
@@ -59,9 +71,8 @@ solve grid =
       w = V.length (V.head grid)
   in runST $ do
     state <- V.replicateM h $ MV.replicate w maxBound
-    runReaderT (search 0 0 (negate $ grid V.! 0 V.! 0)) (grid, state)
-    m <- traverse V.freeze state
-    pure $ m V.! (h-1) V.! (w-1)
+    flip runReaderT (grid, state)
+      $ (search $ S.singleton $ Elem (negate $ grid V.! 0 V.! 0, 0, 0))
 
 main1 :: IO ()
 main1 = readInput >>=

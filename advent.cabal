@@ -17,6 +17,7 @@ executable advent-exe
                     , vector
                     , dlist
                     , criterion
+                    , heaps
 
     other-modules:    Ad01
                     , Ad02
@@ -47,6 +48,7 @@ executable advent-bench
                     , vector
                     , dlist
                     , criterion
+                    , heaps
 
     other-modules:    Ad01
                     , Ad02
