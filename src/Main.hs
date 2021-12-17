@@ -24,6 +24,7 @@ import qualified Ad13
 import qualified Ad14
 import qualified Ad15
 import qualified Ad16
+import qualified Ad17
 
 solutions :: [IO ()]
 solutions =
@@ -59,10 +60,12 @@ solutions =
   , Ad15.main2
   , Ad16.main1
   , Ad16.main2
+  , Ad17.main1
+  , Ad17.main2
   ]
 
 benches :: [Benchmark]
-benches = zip [0..] solutions
+benches = zip [(0 :: Int)..] solutions
   <&> (\(n, io) -> bench (show $ n `divMod` 2) (nfIO io))
 
 isBenchLine :: String -> Bool

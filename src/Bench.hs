@@ -20,6 +20,7 @@ import qualified Ad13
 import qualified Ad14
 import qualified Ad15
 import qualified Ad16
+import qualified Ad17
 
 solutions :: [IO ()]
 solutions =
@@ -55,6 +56,8 @@ solutions =
   , Ad15.main2
   , Ad16.main1
   , Ad16.main2
+  , Ad17.main1
+  , Ad17.main2
   ]
 
 name :: (Int, Int) -> String

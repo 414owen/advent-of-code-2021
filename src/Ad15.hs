@@ -28,18 +28,11 @@ readInput = readFile "input/15"
 type MGrid s = Vector (MVector s Int)
 type M s a = ReaderT (VInput, MGrid s) (ST s) a
 
-newtype Elem = Elem (Int, Int, Int)
-  deriving Eq
-type Heap = Set Elem
-
-instance Ord Elem where
-  compare (Elem e1@(a, b, c)) (Elem e2@(d, e, f))
-    | a == d = compare ((e + f), e, f) ((b + c), b, c)
-    | otherwise = compare e1 e2
+type Heap = Set (Int, Int, Int)
 
 search :: Heap -> M s Int
 search heap = do
-  let Just (Elem (risk, x, y), heap') = S.minView heap
+  let Just ((risk, x, y), heap') = S.minView heap
   (grid, state) <- ask
   let h = V.length grid
   let w = V.length (V.head grid)
@@ -55,10 +48,10 @@ search heap = do
             | (w-1, h-1) == (x, y) -> pure myrisk
             | otherwise -> do
                 MV.write row x myrisk
-                let nh = S.insert (Elem (myrisk, x, y + 1))
-                       $ S.insert (Elem (myrisk, x, y - 1))
-                       $ S.insert (Elem (myrisk, x + 1, y))
-                       $ S.insert (Elem (myrisk, x - 1, y))
+                let nh = S.insert (myrisk, x, y + 1)
+                       $ S.insert (myrisk, x, y - 1)
+                       $ S.insert (myrisk, x + 1, y)
+                       $ S.insert (myrisk, x - 1, y)
                        $ heap'
                 search nh
 
@@ -69,7 +62,7 @@ solve grid =
   in runST $ do
     state <- V.replicateM h $ MV.replicate w maxBound
     flip runReaderT (grid, state)
-      $ (search $ S.singleton $ Elem (negate $ grid V.! 0 V.! 0, 0, 0))
+      $ (search $ S.singleton $ (negate $ grid V.! 0 V.! 0, 0, 0))
 
 main1 :: IO ()
 main1 = readInput >>=
