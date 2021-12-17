@@ -15,11 +15,9 @@ import Data.Vector.Mutable (MVector)
 import qualified Data.Vector.Mutable as MV
 import Control.Monad.Reader
 import Control.Monad.ST
-import Debug.Trace
 
 type Input = [[Int]]
 type VInput = Vector (Vector Int)
-type Pt = (Int, Int)
 
 readInput :: IO Input
 readInput = readFile "input/15"
@@ -41,8 +39,7 @@ instance Ord Elem where
 
 search :: Heap -> M s Int
 search heap = do
-  let Elem ((risk, x, y)) = S.findMin heap
-  let heap' = S.deleteMin heap
+  let Just (Elem (risk, x, y), heap') = S.minView heap
   (grid, state) <- ask
   let h = V.length grid
   let w = V.length (V.head grid)

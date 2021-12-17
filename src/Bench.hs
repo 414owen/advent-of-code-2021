@@ -64,15 +64,5 @@ benches :: [Benchmark]
 benches = zip [0 :: Int ..] solutions
   <&> (\(n, io) -> bench (name $ n `divMod` 2) (nfIO io))
 
-isBenchLine :: String -> Bool
-isBenchLine _ = True
-
-latest :: IO Int
-latest = readFile "README.md"
-  <&> lines
-  <&> filter (/= "")
-  <&> filter isBenchLine
-  <&> length
-
 main :: IO ()
 main = defaultMain benches
