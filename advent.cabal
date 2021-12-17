@@ -19,7 +19,8 @@ executable advent-exe
                     , criterion
                     , heaps
 
-    other-modules:    Ad01
+    other-modules:    All
+                    , Ad01
                     , Ad02
                     , Ad03
                     , Ad04
@@ -51,7 +52,8 @@ executable advent-bench
                     , criterion
                     , heaps
 
-    other-modules:    Ad01
+    other-modules:    All
+                    , Ad01
                     , Ad02
                     , Ad03
                     , Ad04
