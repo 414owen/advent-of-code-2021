@@ -1,5 +1,4 @@
 {-# LANGUAGE MultiWayIf #-}
-{-# LANGUAGE ViewPatterns #-}
 
 module Ad15 (main1, main2) where
 
@@ -48,12 +47,11 @@ search heap = do
             | (w-1, h-1) == (x, y) -> pure myrisk
             | otherwise -> do
                 MV.write row x myrisk
-                let nh = S.insert (myrisk, x, y + 1)
+                search $ S.insert (myrisk, x, y + 1)
                        $ S.insert (myrisk, x, y - 1)
                        $ S.insert (myrisk, x + 1, y)
                        $ S.insert (myrisk, x - 1, y)
-                       $ heap'
-                search nh
+                         heap'
 
 solve :: VInput -> Int
 solve grid =
@@ -62,7 +60,8 @@ solve grid =
   in runST $ do
     state <- V.replicateM h $ MV.replicate w maxBound
     flip runReaderT (grid, state)
-      $ (search $ S.singleton $ (negate $ grid V.! 0 V.! 0, 0, 0))
+      $ search
+      $ S.singleton (negate $ grid V.! 0 V.! 0, 0, 0)
 
 main1 :: IO ()
 main1 = readInput >>=
