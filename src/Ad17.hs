@@ -26,7 +26,7 @@ valid inp@(x1, x2, y1, y2) (x, y) (vx, vy)
   | otherwise = valid inp (x + vx, y + vy) (vx - signum vx, vy - 1)
 
 highestY :: (Int, Int) -> Int
-highestY (_, vy) = sum [1..vy]
+highestY (_, vy) = (vy * (vy + 1)) `div` 2
 
 getValids :: Input -> [(Int, Int)]
 getValids input@(_, x2, _, _) = [(x, y) | x <- [min 0 x2..max 0 x2], y <- [-500..500]]
