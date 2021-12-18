@@ -3,11 +3,8 @@ module Ad18 (main1, main2) where
 import Data.Char
 import Data.Functor
 
-type I = Integer
-
-data Op = Open | Close | Regular I
-  deriving (Eq, Show)
-
+data Tree = Pair Tree Tree | Leaf Int
+data Op = Open | Close | Regular Int
 type Number = [Op]
 
 readNumber :: String -> (Number, String)
@@ -26,12 +23,12 @@ readInput = readFile "input/18"
   <&> fmap readNumber
   <&> fmap fst
 
-addR :: I -> Number -> Number
+addR :: Int -> Number -> Number
 addR n (Regular r : xs) = Regular (n + r) : xs
 addR n (x : xs) = x : addR n xs
 addR _ [] = []
 
-simplE :: Int -> Number -> (Number, I, Bool)
+simplE :: Int -> Number -> (Number, Int, Bool)
 simplE depth (Open : Regular a : Regular b : Close : xs)
   | depth >= 4 = (Regular 0 : addR b xs, a, True)
 simplE depth (Open : xs) = case simplE (depth + 1) xs of
@@ -48,7 +45,7 @@ simplS (Regular n : xs)
   | n >= 10 =
       ( [ Open
         , Regular (n `div` 2)
-        , Regular ((n `div` 2) + (n `mod` 2))
+        , Regular $ (n `div` 2) + (n `mod` 2)
         , Close
         ] <> xs
       , True)
@@ -66,30 +63,28 @@ simpl n = case simplE 0 n of
 addNum :: Number -> Number -> Number
 addNum a b = simpl $ [Open] <> a <> b <> [Close]
 
-data Tree = Pair Tree Tree | Leaf I
-
 toTree :: Number -> (Tree, Number)
 toTree (Open : xs) = let (l, xs') = toTree xs
                          (r, xs'') = toTree xs'
                      in (Pair l r, tail xs'')
 toTree (Regular r : xs) = (Leaf r, xs)
-toTree xs = error $ "can't convert " <> show xs <> " to tree"
+toTree _ = error "can't convert number to tree"
 
-mag :: Tree -> I
+mag :: Tree -> Int
 mag (Leaf n) = n
 mag (Pair l r) = 3 * mag l + 2 * mag r
 
-solve1 :: [Number] -> I
+solve1 :: [Number] -> Int
 solve1 (x:xs) = mag $ fst $ toTree $ foldl addNum x xs
 solve1 _ = error "Bad input"
 
-twoMags :: [Number] -> [I]
+twoMags :: [Number] -> [Int]
 twoMags xs = do
   a <- xs
   b <- xs
   pure $ mag $ fst $ toTree $ addNum a b
 
-solve2 :: [Number] -> I
+solve2 :: [Number] -> Int
 solve2 = maximum . twoMags
 
 main1 :: IO ()
