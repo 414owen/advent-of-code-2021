@@ -1,15 +1,22 @@
 {-# LANGUAGE LambdaCase #-}
 {-# LANGUAGE ViewPatterns #-}
+{-# LANGUAGE NamedFieldPuns #-}
 
 module Ad19 (main1, main2) where
 
+import Control.Arrow
 import Control.Applicative
 import Control.Category ((>>>))
 import Data.List
 import Data.Functor
 import Data.Maybe
 import Data.List.Split
-import Control.Monad.State.Strict
+import Control.Monad.RWS.Strict
+import Data.Set (Set)
+import qualified Data.Set as S
+import Data.Map (Map)
+import qualified Data.Map as M
+import Debug.Trace
 
 type Pt = (Int, Int, Int)
 
@@ -91,52 +98,118 @@ transformAll transformation = fmap (transform transformation)
 manhattan :: Pt -> Pt -> Int
 manhattan (x, y, z) (x', y', z') = abs (x - x') + abs (y - y') + abs (z - z')
 
-dists :: [Pt] -> [Int]
-dists [] = []
-dists (x : xs) = fmap (manhattan x) xs <> dists xs
+distHash :: Pt -> Pt -> Pt
+distHash (x, y, z) (x1, y1, z1)
+  = case sort $ abs <$> [x1 - x, y1 - y, z1 - z] of
+      [a, b, c] -> (a, b, c)
+
+getDists :: [Pt] -> [Pt]
+getDists [] = []
+getDists (x : xs) = fmap (distHash x) xs <> getDists xs
 
 listersect :: Ord a => [a] -> [a] -> [a]
 listersect xs ys = xs \\ (xs \\ ys)
 
-distsMatch :: [Pt] -> [Pt] -> Bool
-distsMatch xs ys = length (listersect (dists xs) (dists ys)) >= 12
+newtype Scanner = Scanner { id :: Int }
+  deriving (Show, Eq, Ord)
 
-trycanoncalize :: [Pt] -> [Pt] -> Maybe ([Pt], Pt, [Pt])
-trycanoncalize can rel = listToMaybe $ do
-  guard (distsMatch can rel)
-  (x, y, z) <- can
-  p2 <- rel
-  orientation <- allOrientations
-  let (x', y', z') = reorient orientation p2
-  let displacement  = (x - x', y - y', z - z')
-  let transformation = ((displacement, orientation) :: Transform)
-  let ys' = transformAll transformation rel
-  case listersect can ys' of
-    xs' | length xs' >= 12 -> pure $ (ys', displacement, rel)
-        | otherwise -> []
+data State =
+  State
+  { rels :: [Scanner]
+  , cans :: [Scanner]
+  , relPts :: Map Scanner [Pt]
+  , canons :: Map Scanner (Pt, [Pt])
+  }
 
-canonicalizeAll :: ([(Pt, [Pt])], [[Pt]]) -> [(Pt, [Pt])]
-canonicalizeAll (cans, []) = cans
-canonicalizeAll (cans, rels) =
-  let (newcan, pt, oldrel) = rec (fmap snd $ cans) rels
-  in canonicalizeAll ((pt, newcan) : cans, filter (/= oldrel) rels)
+type M = RWS (Map Scanner (Set Scanner)) () State
+
+trycanoncalize :: Scanner -> Scanner -> M (Maybe (Scanner, [Pt], Pt, [Pt]))
+trycanoncalize scanId relId = do
+  compatMap <- ask
+  case S.member relId <$> M.lookup scanId compatMap of
+    Just False -> pure Nothing
+    Nothing -> pure Nothing
+    Just True -> do
+      (canPt, can) <- fromJust . M.lookup scanId . canons <$> get
+      rel <- fromJust . M.lookup relId . relPts <$> get
+      pure $ listToMaybe $ do
+        (x, y, z) <- can
+        p2 <- rel
+        orientation <- allOrientations
+        let (x', y', z') = reorient orientation p2
+        let displacement  = (x - x', y - y', z - z')
+        let transformation = ((displacement, orientation) :: Transform)
+        let ys' = transformAll transformation rel
+        case listersect can ys' of
+          xs' | length xs' >= 12 -> pure $ (relId, ys', displacement, rel)
+              | otherwise -> []
+
+canonicalizeAll :: M [(Pt, [Pt])]
+canonicalizeAll = do
+  State { rels, cans, canons } <- get
+  if null rels
+    then pure $ M.elems canons
+    else do
+      (scanId, canPts, scanLoc, oldrel) <- rec cans rels
+      modify $ \case
+        s@State { canons } ->
+          s{ rels = filter (/= scanId) rels
+           , cans = scanId : cans
+           , canons = M.insert scanId (scanLoc, canPts) canons
+           }
+      canonicalizeAll
   where
-    rec :: [[Pt]] -> [[Pt]] -> ([Pt], Pt, [Pt])
-    rec cans rels = case rec' cans rels of
+    rec :: [Scanner] -> [Scanner] -> M (Scanner, [Pt], Pt, [Pt])
+    rec cans rels = rec' cans rels <&> \case
       Nothing -> error "out of canonicalized"
       Just a -> a
 
-    rec' :: [[Pt]] -> [[Pt]] -> Maybe ([Pt], Pt, [Pt])
-    rec' [] _ = Nothing
-    rec' _ [] = Nothing
-    rec' (can : cans) (rel : rels) =
-      trycanoncalize can rel
-      <|> rec' (can : cans) rels
-      <|> rec' cans (rel : rels)
+    rec' :: [Scanner] -> [Scanner] -> M (Maybe (Scanner, [Pt], Pt, [Pt]))
+    rec' [] _ = pure Nothing
+    rec' _ [] = pure Nothing
+    rec' (can : cans) (rel : rels) = do
+      a <- trycanoncalize can rel
+      case a of
+        Nothing -> do
+          b <- rec' (can : cans) rels
+          case b of
+            Nothing -> rec' cans (rel : rels)
+            a -> pure a
+        a -> pure a
+
+listersectSorted :: Ord a => [a] -> [a] -> [a]
+listersectSorted _ [] = []
+listersectSorted [] _ = []
+listersectSorted (x : xs) (y : ys)
+  | x == y = x : listersectSorted xs ys
+  | x < y = listersectSorted xs (y : ys)
+  | otherwise = listersectSorted (x : xs) ys
+
+getCompatible :: Map Scanner [Pt] -> [Scanner] -> Map Scanner (Set Scanner)
+getCompatible m scs = M.fromListWith S.union $ do
+  sca <- scs
+  scb <- scs
+  guard (sca /= scb)
+  let Just sa = M.lookup sca m
+  let Just sb = M.lookup scb m
+  if length (listersectSorted sa sb) >= 12
+    then [(sca, S.singleton scb)]
+    else []
 
 solve :: [[Pt]] -> [(Pt, [Pt])]
 solve [] = error "Bad input"
-solve (x : xs) = canonicalizeAll ([((0,0,0), x)], xs)
+solve (fmap (first Scanner) . zip [0..] -> xs'@(x : xs)) =
+  let l = length xs'
+      dists = M.fromList $ second (sort . getDists) <$> xs'
+      compat = getCompatible dists $ fmap fst xs'
+      initial = State
+              { rels = fst <$> xs
+              , cans = [Scanner 0]
+              , relPts = M.fromList xs
+              , canons = M.fromList [(Scanner 0, ((0,0,0), snd x))]
+              }
+      (ans, _) = evalRWS canonicalizeAll compat initial
+  in ans
 
 solve1 :: [[Pt]] -> Int
 solve1 scanners =
