@@ -50,8 +50,6 @@ allOrientations = do
   rot <- [minBound..maxBound]
   [(dir, rot)]
 
-type M = State ([(Pt, [Pt])], [[Pt]])
-
 direct :: Direction -> Pt -> Pt
 direct Forward pt = pt
 -- for y = up -z
@@ -83,12 +81,12 @@ reorient (direction, rotation) pt =
 translate :: Translation -> Pt -> Pt
 translate (dx, dy, dz) (x, y, z) = (x + dx, y + dy, z + dz)
 
-reinterpret :: Transform -> Pt -> Pt
-reinterpret (translation, orientation) pt
+transform :: Transform -> Pt -> Pt
+transform (translation, orientation) pt
   = translate translation $ reorient orientation pt
 
-reinterpretAll :: Transform -> [Pt] -> [Pt]
-reinterpretAll (transform) = fmap (reinterpret transform)
+transformAll :: Transform -> [Pt] -> [Pt]
+transformAll transformation = fmap (transform transformation)
 
 manhattan :: Pt -> Pt -> Int
 manhattan (x, y, z) (x', y', z') = abs (x - x') + abs (y - y') + abs (z - z')
@@ -111,25 +109,17 @@ trycanoncalize can rel = listToMaybe $ do
   orientation <- allOrientations
   let (x', y', z') = reorient orientation p2
   let displacement  = (x - x', y - y', z - z')
-  let transform = ((displacement, orientation) :: Transform)
-  let ys' = reinterpretAll transform rel
+  let transformation = ((displacement, orientation) :: Transform)
+  let ys' = transformAll transformation rel
   case listersect can ys' of
     xs' | length xs' >= 12 -> pure $ (ys', displacement, rel)
         | otherwise -> []
 
-canonicalizeAll :: M [(Pt, [Pt])]
-canonicalizeAll = do
-  (cans, rels) <- get
-  case rels of
-    [] -> pure cans
-    _ -> do
-      let (newcan, pt, oldrel) = rec (fmap snd $ cans) rels
-      modify $ \case
-        (cans', rels') -> ((pt, newcan) : cans', filter (/= oldrel) rels')
-      case rels of
-        [_] -> fst <$> get
-        _ -> canonicalizeAll
-
+canonicalizeAll :: ([(Pt, [Pt])], [[Pt]]) -> [(Pt, [Pt])]
+canonicalizeAll (cans, []) = cans
+canonicalizeAll (cans, rels) =
+  let (newcan, pt, oldrel) = rec (fmap snd $ cans) rels
+  in canonicalizeAll ((pt, newcan) : cans, filter (/= oldrel) rels)
   where
     rec :: [[Pt]] -> [[Pt]] -> ([Pt], Pt, [Pt])
     rec cans rels = case rec' cans rels of
@@ -146,7 +136,7 @@ canonicalizeAll = do
 
 solve :: [[Pt]] -> [(Pt, [Pt])]
 solve [] = error "Bad input"
-solve (x : xs) = fst $ flip execState ([((0,0,0), x)], xs) canonicalizeAll
+solve (x : xs) = canonicalizeAll ([((0,0,0), x)], xs)
 
 solve1 :: [[Pt]] -> Int
 solve1 scanners =
