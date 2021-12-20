@@ -144,21 +144,20 @@ canonicalizeAll = do
       <|> rec' (can : cans) rels
       <|> rec' cans (rel : rels)
 
+solve :: [[Pt]] -> [(Pt, [Pt])]
+solve [] = error "Bad input"
+solve (x : xs) = fst $ flip execState ([((0,0,0), x)], xs) canonicalizeAll
+
 solve1 :: [[Pt]] -> Int
-solve1 [] = error "Bad input"
-solve1 (x : xs) =
-  let (cans, _) = flip execState ([((0,0,0), x)], xs) canonicalizeAll
-  in length $ nub $ concat $ fmap snd $ cans
+solve1 scanners =
+  length $ nub $ concat $ fmap snd $ solve scanners
 
 solve2 :: [[Pt]] -> Int
-solve2 [] = error "Bad input"
-solve2 (x : xs) =
-  let (cans, _) = flip execState ([((0,0,0), x)], xs) canonicalizeAll
-  in maximum $ do
-    let xs' = nub $ fmap fst $ cans
-    a <- xs'
-    b <- xs'
-    [manhattan a b]
+solve2 scanners = maximum $ do
+  let xs' = nub $ fmap fst $ solve scanners
+  a <- xs'
+  b <- xs'
+  [manhattan a b]
 
 main1 :: IO ()
 main1 = readInput >>= print . solve1
