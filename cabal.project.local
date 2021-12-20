@@ -1,0 +1,4 @@
+ignore-project: False
+
+packages:
+  ../criterion/

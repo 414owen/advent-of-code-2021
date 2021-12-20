@@ -8,14 +8,14 @@
 , vector
 , dlist
 , criterion
-, heaps
+, split
 }:
 
 mkDerivation {
   pname = "advent";
   version = "0.1.0.0";
   src = ./.;
-  libraryHaskellDepends = [ base containers mtl vector dlist criterion heaps ];
+  libraryHaskellDepends = [ base containers mtl vector dlist criterion split ];
   testHaskellDepends = [ base ];
   buildTools = [ hlint haskell-language-server ];
   description = "Advent of Code solutions";

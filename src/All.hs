@@ -18,6 +18,13 @@ import qualified Ad15
 import qualified Ad16
 import qualified Ad17
 import qualified Ad18
+import qualified Ad19
+
+-- solutions :: [IO ()]
+-- solutions =
+--   [ Ad01.main1
+--   , Ad01.main2
+--   ]
 
 solutions :: [IO ()]
 solutions =
@@ -57,4 +64,6 @@ solutions =
   , Ad17.main2
   , Ad18.main1
   , Ad18.main2
+  , Ad19.main1
+  , Ad19.main2
   ]
