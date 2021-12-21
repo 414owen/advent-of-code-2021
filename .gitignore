@@ -4,3 +4,4 @@ dist*
 *.html
 *.xhtml
 *.txt
+*.json
