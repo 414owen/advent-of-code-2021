@@ -16,7 +16,6 @@ import Data.Set (Set)
 import qualified Data.Set as S
 import Data.Map (Map)
 import qualified Data.Map as M
-import Debug.Trace
 
 type Pt = (Int, Int, Int)
 
@@ -128,6 +127,10 @@ data State =
 
 type M = RWS (Map Scanner (Set Scanner)) () State
 
+listToMaybe' :: [a] -> Maybe a
+listToMaybe' (x : _) = Just x
+listToMaybe' _ = Nothing
+
 trycanoncalize :: Scanner -> Scanner -> M (Maybe (Scanner, [Pt], Pt, [Pt]))
 trycanoncalize scanId relId = do
   compatMap <- ask
@@ -135,9 +138,9 @@ trycanoncalize scanId relId = do
     Just False -> pure Nothing
     Nothing -> pure Nothing
     Just True -> do
-      (canPt, can) <- fromJust . M.lookup scanId . canons <$> get
+      (_, can) <- fromJust . M.lookup scanId . canons <$> get
       rel <- fromJust . M.lookup relId . relPts <$> get
-      pure $ listToMaybe $ do
+      pure $ listToMaybe' $ do
         p2 <- rel
         orientation <- allOrientations
         let (x', y', z') = reorient orientation p2
@@ -153,7 +156,7 @@ trycanoncalize scanId relId = do
 canonicalizeAll :: M [(Pt, [Pt])]
 canonicalizeAll = do
   State { rels, cans, canons } <- get
-  if null $ traceShow (length rels) rels
+  if null rels
     then pure $ M.elems canons
     else do
       (scanId, canPts, scanLoc, oldrel) <- rec cans rels
