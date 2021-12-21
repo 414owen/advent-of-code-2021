@@ -33,7 +33,7 @@ readInput = readFile "input/19"
   <&> filter (/= "")
   <&> splitWhen ("---" `isPrefixOf`)
   <&> filter (/= [])
-  <&> fmap (fmap parsePoint)
+  <&> fmap (sort . fmap parsePoint)
 
 data Direction = Forward | Up | Down | DRight | DLeft | Backward
   deriving (Bounded, Enum, Show)
@@ -107,8 +107,13 @@ getDists :: [Pt] -> [Pt]
 getDists [] = []
 getDists (x : xs) = fmap (distHash x) xs <> getDists xs
 
-listersect :: Ord a => [a] -> [a] -> [a]
-listersect xs ys = xs \\ (xs \\ ys)
+listersectSorted :: Ord a => [a] -> [a] -> [a]
+listersectSorted [] _ = []
+listersectSorted _ [] = []
+listersectSorted xs'@(x : xs) ys'@(y : ys)
+  | x < y = listersectSorted xs ys'
+  | x > y = listersectSorted xs' ys
+  | otherwise = x : listersectSorted xs ys
 
 newtype Scanner = Scanner { id :: Int }
   deriving (Show, Eq, Ord)
@@ -133,21 +138,22 @@ trycanoncalize scanId relId = do
       (canPt, can) <- fromJust . M.lookup scanId . canons <$> get
       rel <- fromJust . M.lookup relId . relPts <$> get
       pure $ listToMaybe $ do
-        (x, y, z) <- can
         p2 <- rel
         orientation <- allOrientations
         let (x', y', z') = reorient orientation p2
+        (x, y, z) <- can
         let displacement  = (x - x', y - y', z - z')
-        let transformation = ((displacement, orientation) :: Transform)
-        let ys' = transformAll transformation rel
-        case listersect can ys' of
-          xs' | length xs' >= 12 -> pure $ (relId, ys', displacement, rel)
-              | otherwise -> []
+        let transformation = (displacement, orientation)
+        let ys' = sort $ transformAll transformation rel
+        case listersectSorted can ys' of
+          (_ : _ : _ : _ : _ : _ : _ : _ : _ : _ : _ : _ : _) ->
+            [(relId, ys', displacement, rel)]
+          _ -> []
 
 canonicalizeAll :: M [(Pt, [Pt])]
 canonicalizeAll = do
   State { rels, cans, canons } <- get
-  if null rels
+  if null $ traceShow (length rels) rels
     then pure $ M.elems canons
     else do
       (scanId, canPts, scanLoc, oldrel) <- rec cans rels
@@ -176,14 +182,6 @@ canonicalizeAll = do
             Nothing -> rec' cans (rel : rels)
             a -> pure a
         a -> pure a
-
-listersectSorted :: Ord a => [a] -> [a] -> [a]
-listersectSorted _ [] = []
-listersectSorted [] _ = []
-listersectSorted (x : xs) (y : ys)
-  | x == y = x : listersectSorted xs ys
-  | x < y = listersectSorted xs (y : ys)
-  | otherwise = listersectSorted (x : xs) ys
 
 getCompatible :: Map Scanner [Pt] -> [Scanner] -> Map Scanner (Set Scanner)
 getCompatible m scs = M.fromListWith S.union $ do
