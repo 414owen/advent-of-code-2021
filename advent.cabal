@@ -19,6 +19,8 @@ common shared
                     , dlist
                     , criterion
                     , split
+                    , hashtables
+                    , hashable
 
     other-modules:    All
                     , Ad01
@@ -41,6 +43,7 @@ common shared
                     , Ad18
                     , Ad19
                     , Ad20
+                    , Ad21
 
 executable advent-exe
     import:  shared
