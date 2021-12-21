@@ -857,16 +857,21 @@ function runchart(reportDataParam) {
     overview.appendChild(mkOverview(reportData.slice()));
     var reports = document.getElementById('reports');
     reportData.forEach(function(report, i) {
-      var n = (Math.floor(i/2) + 1).toString();
+      var day = Math.floor(i/2) + 1
+      var part = (n % 2 == 0 ? "1" : "2");
+      var n = day.toString();
       if (n.length == 1) {
         n = '0' + n;
       }
-      var id = String(i);
+      var id = String("day-" + day + "-part-" + part);
       var github = "https://github.com/414owen/advent-of-code-2021/blob/master/src/Ad" + n + ".hs";
       reports.appendChild(
         elem('div', {id: id, className: 'report-details'}, [
           elem('h1', {}, [
-            report.groups.join(' / '),
+            elem('a', {href: '#' + id}, [
+              '#'
+            ]),
+            ' ' + report.groups.join(' / '),
             elem('a', {href: github}, [
               elem("img", {src: "https://owen.cafe/img/github-d.svg"}, [])
             ]),
