@@ -193,15 +193,12 @@ getCompatible m scs = M.fromListWith S.union $ do
   guard (sca /= scb)
   let Just sa = M.lookup sca m
   let Just sb = M.lookup scb m
-  if length (listersectSorted sa sb) >= 12
-    then [(sca, S.singleton scb)]
-    else []
+  [(sca, S.singleton scb) | length (listersectSorted sa sb) >= 12]
 
 solve :: [[Pt]] -> [(Pt, [Pt])]
 solve [] = error "Bad input"
 solve (fmap (first Scanner) . zip [0..] -> xs'@(x : xs)) =
-  let l = length xs'
-      dists = M.fromList $ second (sort . getDists) <$> xs'
+  let dists = M.fromList $ second (sort . getDists) <$> xs'
       compat = getCompatible dists $ fmap fst xs'
       initial = State
               { rels = fst <$> xs
@@ -214,7 +211,7 @@ solve (fmap (first Scanner) . zip [0..] -> xs'@(x : xs)) =
 
 solve1 :: [[Pt]] -> Int
 solve1 scanners =
-  length $ nub $ concat $ fmap snd $ solve scanners
+  length $ nub $ concatMap snd $ solve scanners
 
 solve2 :: [[Pt]] -> Int
 solve2 scanners = maximum $ do
