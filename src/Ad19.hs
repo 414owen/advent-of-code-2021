@@ -5,8 +5,6 @@
 module Ad19 (main1, main2) where
 
 import Control.Arrow
-import Control.Applicative
-import Control.Category ((>>>))
 import Data.List
 import Data.Functor
 import Data.Maybe
@@ -101,6 +99,7 @@ distHash :: Pt -> Pt -> Pt
 distHash (x, y, z) (x1, y1, z1)
   = case sort $ abs <$> [x1 - x, y1 - y, z1 - z] of
       [a, b, c] -> (a, b, c)
+      _ -> error "impossible"
 
 getDists :: [Pt] -> [Pt]
 getDists [] = []
@@ -121,25 +120,23 @@ data State =
   State
   { rels :: [Scanner]
   , cans :: [Scanner]
-  , relPts :: Map Scanner [Pt]
   , canons :: Map Scanner (Pt, [Pt])
   }
 
-type M = RWS (Map Scanner (Set Scanner)) () State
+type M = RWS (Map Scanner (Set Scanner), Map Scanner [Pt]) () State
 
 listToMaybe' :: [a] -> Maybe a
 listToMaybe' (x : _) = Just x
 listToMaybe' _ = Nothing
 
-trycanoncalize :: Scanner -> Scanner -> M (Maybe (Scanner, [Pt], Pt, [Pt]))
+
+trycanoncalize :: Scanner -> Scanner -> M (Maybe (Scanner, [Pt], Pt))
 trycanoncalize scanId relId = do
-  compatMap <- ask
-  case S.member relId <$> M.lookup scanId compatMap of
-    Just False -> pure Nothing
-    Nothing -> pure Nothing
-    Just True -> do
+  (compatMap, relMap) <- ask
+  if S.member relId $ fromJust $ M.lookup scanId compatMap
+    then do
       (_, can) <- fromJust . M.lookup scanId . canons <$> get
-      rel <- fromJust . M.lookup relId . relPts <$> get
+      let rel = fromJust $ M.lookup relId relMap
       pure $ listToMaybe' $ do
         p2 <- rel
         orientation <- allOrientations
@@ -150,8 +147,9 @@ trycanoncalize scanId relId = do
         let ys' = sort $ transformAll transformation rel
         case listersectSorted can ys' of
           (_ : _ : _ : _ : _ : _ : _ : _ : _ : _ : _ : _ : _) ->
-            [(relId, ys', displacement, rel)]
+            [(relId, ys', displacement)]
           _ -> []
+    else pure Nothing
 
 canonicalizeAll :: M [(Pt, [Pt])]
 canonicalizeAll = do
@@ -159,26 +157,24 @@ canonicalizeAll = do
   if null rels
     then pure $ M.elems canons
     else do
-      (scanId, canPts, scanLoc, oldrel) <- rec cans rels
-      modify $ \case
-        s@State { canons } ->
+      (scanId, canPts, scanLoc) <- rec cans rels
+      modify $ \s ->
           s{ rels = filter (/= scanId) rels
            , cans = scanId : cans
            , canons = M.insert scanId (scanLoc, canPts) canons
            }
       canonicalizeAll
   where
-    rec :: [Scanner] -> [Scanner] -> M (Scanner, [Pt], Pt, [Pt])
+    rec :: [Scanner] -> [Scanner] -> M (Scanner, [Pt], Pt)
     rec cans rels = rec' cans rels <&> \case
       Nothing -> error "out of canonicalized"
       Just a -> a
 
-    rec' :: [Scanner] -> [Scanner] -> M (Maybe (Scanner, [Pt], Pt, [Pt]))
+    rec' :: [Scanner] -> [Scanner] -> M (Maybe (Scanner, [Pt], Pt))
     rec' [] _ = pure Nothing
     rec' _ [] = pure Nothing
-    rec' (can : cans) (rel : rels) = do
-      a <- trycanoncalize can rel
-      case a of
+    rec' (can : cans) (rel : rels) =
+      trycanoncalize can rel >>= \case
         Nothing -> do
           b <- rec' (can : cans) rels
           case b of
@@ -196,18 +192,17 @@ getCompatible m scs = M.fromListWith S.union $ do
   [(sca, S.singleton scb) | length (listersectSorted sa sb) >= 12]
 
 solve :: [[Pt]] -> [(Pt, [Pt])]
-solve [] = error "Bad input"
 solve (fmap (first Scanner) . zip [0..] -> xs'@(x : xs)) =
   let dists = M.fromList $ second (sort . getDists) <$> xs'
       compat = getCompatible dists $ fmap fst xs'
       initial = State
               { rels = fst <$> xs
               , cans = [Scanner 0]
-              , relPts = M.fromList xs
               , canons = M.fromList [(Scanner 0, ((0,0,0), snd x))]
               }
-      (ans, _) = evalRWS canonicalizeAll compat initial
+      (ans, _) = evalRWS canonicalizeAll (compat, M.fromList xs) initial
   in ans
+solve _ = error "Bad input"
 
 solve1 :: [[Pt]] -> Int
 solve1 scanners =
@@ -215,7 +210,7 @@ solve1 scanners =
 
 solve2 :: [[Pt]] -> Int
 solve2 scanners = maximum $ do
-  let xs' = nub $ fmap fst $ solve scanners
+  let xs' = nub $ fst <$> solve scanners
   a <- xs'
   b <- xs'
   [manhattan a b]
