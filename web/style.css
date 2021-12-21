@@ -1,0 +1,181 @@
+html,body {
+  padding: 0; margin: 0;
+  font-family: monospace;
+}
+html {
+  box-sizing: border-box;
+  font-size: 16px;
+}
+*, *:before, *:after {
+  box-sizing: inherit;
+}
+
+table {
+  border-collapse: collapse;
+  width: 100%;
+}
+
+th {
+  text-align: left;
+}
+
+tr:not(:last-child) {
+  border-bottom: 1px solid #333;
+}
+
+body, h1, h2, h3, p, ol, ul {
+  margin: 0;
+  padding: 0;
+}
+
+h1, h2, h3 {
+  padding: 2rem 0;
+  font-weight: 700;
+}
+
+ol, ul {
+  list-style: none;
+}
+
+img {
+  max-width: 100%;
+  height: auto;
+}
+
+* {
+    -webkit-tap-highlight-color: transparent;
+}
+
+body, select {
+  color: #eee;
+}
+
+body > * {
+  background: #111111;
+  padding-bottom: 3rem;
+}
+
+div.scatter, div.kde {
+  position: relative;
+  display: inline-block;
+  width: 50%;
+  padding: 0 2em;
+}
+
+.content, .explanation {
+  margin: auto;
+  max-width: 1000px;
+  padding: 0 20px;
+}
+
+#legend-toggle {
+  cursor: pointer;
+}
+
+.overview-info a {
+  display: inline-block;
+  margin-left: 10px;
+}
+
+.overview-info .info {
+  font-size: 120%;
+  font-weight: 400;
+  vertical-align: middle;
+  line-height: 1em;
+}
+
+.top-overview {
+  display: flex;
+  justify-content: space-between;
+}
+
+.chevron {
+  position:relative;
+  display:block;
+  transition-property: transform;
+  transition-duration: 400ms;
+  line-height: 1em;
+  font-size: 180%;
+}
+
+.chevron.right {
+  transform: scale(-1,1);
+}
+
+.chevron::before {
+  vertical-align: middle;
+  content:"\2039";
+}
+
+select {
+  outline: none;
+  border:none;
+  background: transparent;
+}
+
+footer .content {
+  padding: 0;
+}
+
+@media screen and (max-width: 800px) {
+  div.scatter, div.kde {
+    width: 100%;
+    display: block;
+  }
+  .report-details .outliers {
+    margin: auto;
+  }
+  .report-details table {
+    margin: auto;
+  }
+}
+
+table.analysis th,
+table.analysis td,
+.outliers {
+  padding-left: 1em;
+  padding-right: 1em;
+}
+
+.outliers {
+  padding-top: 1em;
+}
+
+table.analysis {
+  margin-top: 2em;
+}
+
+table.analysis .low, table.analysis .high {
+  opacity: 0.8;
+}
+
+.report-details {
+  page-break-inside: avoid;
+}
+
+a, a:hover, a:visited, a:active {
+  text-decoration: none;
+  color: #309ef2;
+}
+
+#overview-chart {
+  width: 100%; /*height is determined by number of rows in JavaScript */
+}
+
+#grokularation.explanation li {
+  margin: 1em 0;
+}
+
+#controls-explanation.explanation em {
+  font-weight: 600;
+  font-style: normal;
+}
+
+h1 {
+  font-size: 32px;
+}
+
+#reports h1 img {
+  height: 24px;
+  padding-left: 1em;
+}
