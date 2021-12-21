@@ -866,7 +866,7 @@ function runchart(reportDataParam) {
       reports.appendChild(
         elem('div', {id: id, className: 'report-details'}, [
           elem('h1', {}, [
-            elem('a', {href: '#' + id}, [report.groups.join(' / ')]),
+            report.groups.join(' / '),
             elem('a', {href: github}, [
               elem("img", {src: "https://owen.cafe/img/github-d.svg"}, [])
             ]),
