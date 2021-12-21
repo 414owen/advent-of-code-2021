@@ -3,12 +3,10 @@
 
 module Ad20 (main1, main2) where
 
-import Control.Category ((>>>))
 import Data.List
 import Data.Functor
 import Data.Vector (Vector)
 import qualified Data.Vector as V
-import Debug.Trace
 
 import Data.Set (Set)
 import qualified Data.Set as S
@@ -28,6 +26,7 @@ readInput = readFile "input/20"
   <&> \case
     (rules : board) -> ( V.fromList $ fmap (== '#') rules
                        , parseBoard board)
+    _ -> error "Bad input"
 
 getBounds :: Set Pt -> ((Int, Int), (Int, Int))
 getBounds board = let (xs, ys) = unzip $ S.toList board
@@ -68,7 +67,7 @@ tick n rule board = (n+1,) $ S.fromList $ do
 
 boards :: Vector Bool -> Set Pt -> [Set Pt]
 boards rules board = snd <$> iterate tr (0, board)
-  where tr (n, board) = tick n rules board
+  where tr (n, board') = tick n rules board'
 
 solve1 :: Vector Bool -> Set Pt -> Int
 solve1 rules board = S.size $ boards rules board !! 2
