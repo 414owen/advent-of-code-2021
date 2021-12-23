@@ -44,6 +44,7 @@ common shared
                     , Ad19
                     , Ad20
                     , Ad21
+                    , Ad22
 
 executable advent-exe
     import:  shared
