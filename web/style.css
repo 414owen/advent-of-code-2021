@@ -89,24 +89,6 @@ div.scatter, div.kde {
   justify-content: space-between;
 }
 
-.chevron {
-  position:relative;
-  display:block;
-  transition-property: transform;
-  transition-duration: 400ms;
-  line-height: 1em;
-  font-size: 180%;
-}
-
-.chevron.right {
-  transform: scale(-1,1);
-}
-
-.chevron::before {
-  vertical-align: middle;
-  content:"\2039";
-}
-
 select {
   outline: none;
   border:none;

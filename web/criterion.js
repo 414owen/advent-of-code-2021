@@ -866,8 +866,8 @@ function runchart(reportDataParam) {
       var id = String("day-" + day + "-part-" + part);
       var github = "https://github.com/414owen/advent-of-code-2021/blob/master/src/Ad" + n + ".hs";
       reports.appendChild(
-        elem('div', {id: id, className: 'report-details'}, [
-          elem('h1', {}, [
+        elem('section', {id: id, className: 'report-details'}, [
+          elem('h2', {}, [
             elem('a', {href: '#' + id}, [
               '#'
             ]),
