@@ -117,37 +117,42 @@ interpret xs (Eql reg op : ops) regs = do
   MV.write regs reg $ if lhs == rhs then 1 else 0
   interpret xs ops regs
 
--- runChunk :: Int -> Chunk -> Maybe [Int]
--- runChunk acc (More ops) = runST
---   regs <- MV.replicate nRegs 0
---   MV.write regs zreg acc
---   acc' interpret
-
 intToStr :: Int -> String
 intToStr 0 = []
 intToStr n = chr (ord 'a' + fromIntegral (n `mod` 26))
            : intToStr (n `div` 26)
 
-solve :: [Int] -> Int -> [Int] -> [Chunk] -> Maybe [Int]
-solve _ 0 _ [] = Just []
-solve _ _ _ [] = Nothing
-solve _ _ [] _ = Nothing
-solve digs acc (input : rest) (chunk : chunks)
-  = runST $ do
-      regs <- MV.replicate nRegs 0
-      MV.write regs zReg acc
-      let ops = case chunk of
-            More a -> a
-            Less a -> a
-      interpret [input] ops regs
-      res <- MV.read regs zReg
-      case (chunk, res < acc) of
-        (Less _, False) -> pure $ solve digs acc rest (chunk : chunks)
-        _ -> pure $ (input:) <$> solve digs res digs chunks
-               <|> solve digs acc rest (chunk : chunks)
+chunkOps :: Chunk -> [Op]
+chunkOps (More ops) = ops
+chunkOps (Less ops) = ops
+
+evalChunk :: Int -> Chunk -> Int -> Int
+evalChunk acc chunk input = runST $ do
+  regs <- MV.replicate nRegs 0
+  MV.write regs zReg acc
+  interpret [input] (chunkOps chunk) regs
+  MV.read regs zReg
+
+solve' :: [Int] -> Int -> [Int] -> [Chunk] -> Maybe [Int]
+solve' _ 0 _ [] = Just []
+solve' _ _ _ [] = Nothing
+solve' _ _ [] _ = Nothing
+solve' digs acc (input : rest) (chunk : chunks)
+  = let res = evalChunk acc chunk input
+    in case (chunk, res < acc) of
+        (Less _, False) -> rec acc rest (chunk : chunks)
+        _ -> ((input:) <$> rec res digs chunks) <|> rec acc rest (chunk : chunks)
+   where
+     rec = solve' digs
+
+solve :: [Int] -> [Chunk] -> Maybe [Int]
+solve digs chunks = solve' digs 0 digs chunks
+
+main :: [Int] -> IO ()
+main digs = readInput >>= print . fmap (concatMap show) . solve digs
 
 main1 :: IO ()
-main1 = readInput >>= print . fmap (concatMap show) . solve (reverse [1..9]) 0 (reverse [1..9])
+main1 = main $ reverse [1..9]
 
 main2 :: IO ()
-main2 = readInput >>= print . fmap (concatMap show) . solve [1..9] 0 [1..9]
+main2 = main [1..9]
