@@ -79,4 +79,5 @@ solutions =
   , Ad23.main1
   , Ad23.main2
   , Ad24.main1
+  , Ad24.main2
   ]

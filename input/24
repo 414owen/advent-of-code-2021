@@ -87,7 +87,8 @@ add y 10
 mul y x
 add z y
 
-END
+
+-- if input == accumulator % 26 - (6) then acc / 26 else 26 * (acc / 26)
 
 inp w
 mul x 0
