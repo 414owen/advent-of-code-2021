@@ -3,15 +3,15 @@
 
 module Ad24 (main1, main2) where
 
+import Control.Arrow
+import Control.Applicative
+import Control.Monad.ST
 import Data.Char
 import Data.Maybe
 import Data.List
 import Data.Functor
-import Control.Applicative
-import Control.Monad.ST
 import Data.Vector.Mutable (MVector)
 import qualified Data.Vector.Mutable as MV
-import Debug.Trace
 
 data Op = Inp Int
         | Add Int Operand
@@ -27,11 +27,11 @@ data Chunk = Less [Op] | More [Op]
 data Operand = Reg Int | Lit Int
 
 instance Show Operand where
-  show (Reg x) = "Reg " <> ((['w'..] !! x):[])
+  show (Reg x) = "Reg " <> [['w'..] !! x]
   show (Lit n) = "Lit " <> show n
 
 regStrs :: [(String, Int)]
-regStrs = (zip ((:[]) <$> ['w'..'z']) [0..])
+regStrs = zip ((:[]) <$> ['w'..'z']) [0..]
 
 nRegs :: Int
 nRegs = length regStrs
@@ -63,13 +63,12 @@ isInp _ = False
 
 toChunks :: [Op] -> [Chunk]
 toChunks [] = []
-toChunks (_:ops) =
-  let (c, rest) = break isInp ops
+toChunks (inputOp:ops) =
+  let (ops', rest) = first (inputOp:) $ break isInp ops
       chunks = toChunks rest
-  in (:chunks) $ case c of
-    ops' -> case ops' !! 3 of
-      Div _ (Lit 1) -> More $ ops'
-      _ -> Less $ ops'
+  in (:chunks) $ case ops' !! 4 of
+    Div _ (Lit 1) -> More ops'
+    _ -> Less ops'
 
 readInput :: IO [Chunk]
 readInput = readFile "input/24"
@@ -137,11 +136,10 @@ solve digs acc (input : rest) (chunk : chunks)
   = runST $ do
       regs <- MV.replicate nRegs 0
       MV.write regs zReg acc
-      MV.write regs 0 input
       let ops = case chunk of
             More a -> a
             Less a -> a
-      interpret [] ops regs
+      interpret [input] ops regs
       res <- MV.read regs zReg
       case (chunk, res < acc) of
         (Less _, False) -> pure $ solve digs acc rest (chunk : chunks)
