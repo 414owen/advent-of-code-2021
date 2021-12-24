@@ -31,7 +31,6 @@ forM2 l1 l2 f = forM l1 $ \a -> forM l2 $ \b -> f a b
 
 inc :: Int -> Int -> M s ()
 inc x y = do
-  (x, y) <- pure (x, y)
   grid <- ask
   if | x < 0   -> pure ()
      | y < 0   -> pure ()

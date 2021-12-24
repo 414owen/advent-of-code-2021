@@ -100,10 +100,10 @@ type M2 s = ReaderT (HashTable s State2 (Int, Int)) (ST s)
 
 turn2 :: State2 -> Int -> State2
 turn2 s n = case s of
-  (p1@(pos, sc), p2, P1) ->
+  ((pos, sc), p2, P1) ->
     let np = (pos + n) `mod` 10
     in ((np, np + 1 + sc), p2, P2)
-  (p1, p2@(pos, sc), P2) ->
+  (p1, (pos, sc), P2) ->
     let np = (pos + n) `mod` 10
     in (p1, (np, np + 1 + sc), P1)
 
@@ -118,7 +118,7 @@ turns s = do
   [turn2 s $ a + b + c]
 
 runTo2 :: State2 -> M2 s (Int, Int)
-runTo2 s@(p1@(pos1, sc1), p2@(pos2, sc2), turn) = do
+runTo2 s@((_, sc1), (_, sc2), _) = do
   if max sc1 sc2 >= 21
     then pure $ if sc1 > sc2 then (1, 0) else (0, 1)
     else do

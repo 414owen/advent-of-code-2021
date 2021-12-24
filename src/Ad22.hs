@@ -76,11 +76,11 @@ diff (c1@(Cube xr1 yr1 zr1) : cs) c2@(Cube xr2 yr2 zr2)
         let c3 = Cube xr3 yr3 zr3
         guard $ cubesOverlap c1 c3
         guard $ not $ cubesOverlap c2 c3
-        pure $ c3
+        pure c3
   | otherwise = c1 : diff cs c2
 
 switch :: [Cube] -> Switch -> [Cube]
-switch cs (On c) = (foldl' diff [c] cs) <> cs
+switch cs (On c) = foldl' diff [c] cs <> cs
 switch cs (Off c) = diff cs c
 
 onCubes :: [Switch] -> [Cube]
@@ -96,11 +96,10 @@ solve = onCubes
   >>> sum
 
 limit50' :: Cube -> Bool
-limit50' (Cube xr yr zr) = (l xr) && (l yr) && (l zr)
+limit50' (Cube xr yr zr) = l xr && l yr && l zr
   where
     l (a, b) = l' a && l' b
     l' a = a >= negate 50 && a <= 50
-
 
 limit50 :: Switch -> Bool
 limit50 (On c) = limit50' c

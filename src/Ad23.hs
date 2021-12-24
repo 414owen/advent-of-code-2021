@@ -1,25 +1,14 @@
-{-# LANGUAGE DeriveGeneric #-}
-{-# LANGUAGE ViewPatterns #-}
 {-# LANGUAGE TupleSections #-}
 {-# LANGUAGE MultiWayIf #-}
 
 module Ad23 (main1, main2) where
 
-import Data.Tuple
-import Control.Applicative
 import Control.Arrow
-import Control.Category ((>>>))
-import Control.Monad
-import Control.Monad.State.Strict
-import Data.Vector (Vector)
-import qualified Data.Vector as V
 import Data.Map (Map)
 import qualified Data.Map as M
 import Data.Maybe
 import Data.Functor
-import Data.Function
 import Data.Foldable
-import Debug.Trace
 
 data Pod = A | B | C | D
   deriving (Show, Eq, Ord)
@@ -80,14 +69,14 @@ getMoves maxY m (x, y) podType =
   in
   if | x == dx && all (Just podType ==) (flip M.lookup m . (x,) <$> [y+1..maxY]) -> []
      | inHall
-         && all (isEmpty m) ((,1) <$> (to x dx))
+         && all (isEmpty m) ((,1) <$> to x dx)
          && all (\p -> not (M.member p m) || M.lookup p m == Just podType)
              dps -> [maximum $ filter (isEmpty m) dps]
      | not inHall
          && all (isEmpty m) ((x,) <$> [2..y-1]) ->
            filter (not . isDest . fst) $
-             (takeWhile (isEmpty m) $ (,1) <$> to x 1) <>
-             (takeWhile (isEmpty m) $ (,1) <$> to x 11)
+             takeWhile (isEmpty m) ((,1) <$> to x 1) <>
+             takeWhile (isEmpty m) ((,1) <$> to x 11)
      | True -> []
 
 getCost :: Pod -> Int
@@ -102,8 +91,8 @@ manhattan (x1, y1) (x2, y2) = abs (x1 - x2) + abs (y1 - y2)
 type DP = Map (Map Pt Pod) Int
 
 search :: Int -> Int -> Int -> Energy -> Map Pt Pod -> DP -> (Int, DP)
-search maxY _ best energy _ dp | energy >= best = (best, dp)
-search maxY 0 _ energy pods dp = (energy, dp)
+search _ _ best energy _ dp | energy >= best = (best, dp)
+search _ 0 _ energy _ dp = (energy, dp)
 search maxY todo best energy pods dp =
   let isWorse = case M.lookup pods dp of
         Just e | e <= energy -> True
@@ -116,11 +105,11 @@ search maxY todo best energy pods dp =
       [(pt, pt2, pod)]
   where
     rec :: (Int, DP) -> (Pt, Pt, Pod) -> (Int, DP)
-    rec (best', dp') (from, to, pod)
+    rec (best', dp') (from, to', pod)
       = first (min best') $ search maxY
-          (if snd to /= 1 then todo - 1 else todo) best'
-          (energy + manhattan from to * getCost pod)
-          (M.insert to pod $ M.delete from pods)
+          (if snd to' /= 1 then todo - 1 else todo) best'
+          (energy + manhattan from to' * getCost pod)
+          (M.insert to' pod $ M.delete from pods)
           dp'
 
 solve :: Int -> Input -> Int
