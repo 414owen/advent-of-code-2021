@@ -13,7 +13,6 @@ import Data.Foldable
 data Pod = A | B | C | D
   deriving (Show, Eq, Ord)
 type Pt = (Int, Int)
-type Energy = Int
 type Input = [(Pt, Pod)]
 
 enumerate :: [a] -> [(Int, a)]
@@ -90,7 +89,7 @@ manhattan (x1, y1) (x2, y2) = abs (x1 - x2) + abs (y1 - y2)
 
 type DP = Map (Map Pt Pod) Int
 
-search :: Int -> Int -> Int -> Energy -> Map Pt Pod -> DP -> (Int, DP)
+search :: Int -> Int -> Int -> Int -> Map Pt Pod -> DP -> (Int, DP)
 search _ _ best energy _ dp | energy >= best = (best, dp)
 search _ 0 _ energy _ dp = (energy, dp)
 search maxY todo best energy pods dp =
