@@ -23,6 +23,7 @@ import qualified Ad20
 import qualified Ad21
 import qualified Ad22
 import qualified Ad23
+import qualified Ad24
 
 -- solutions :: [IO ()]
 -- solutions =
@@ -77,4 +78,5 @@ solutions =
   , Ad22.main2
   , Ad23.main1
   , Ad23.main2
+  , Ad24.main1
   ]

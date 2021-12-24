@@ -1,0 +1,282 @@
+inp w
+mul x 0
+add x z
+mod x 26
+div z 1
+add x 14
+eql x w
+eql x 0
+mul y 0
+add y 25
+mul y x
+add y 1
+mul z y
+mul y 0
+add y w
+add y 1
+mul y x
+add z y
+
+inp w
+mul x 0
+add x z
+mod x 26
+div z 1
+add x 15
+eql x w
+eql x 0
+mul y 0
+add y 25
+mul y x
+add y 1
+mul z y
+mul y 0
+add y w
+add y 7
+mul y x
+add z y
+
+inp w
+mul x 0
+add x z
+mod x 26
+div z 1
+add x 15
+eql x w
+eql x 0
+mul y 0
+add y 25
+mul y x
+add y 1
+mul z y
+mul y 0
+add y w
+add y 13
+mul y x
+add z y
+inp w
+mul x 0
+add x z
+mod x 26
+div z 26
+add x -6
+eql x w
+eql x 0
+mul y 0
+add y 25
+mul y x
+add y 1
+mul z y
+mul y 0
+add y w
+add y 10
+mul y x
+add z y
+inp w
+mul x 0
+add x z
+mod x 26
+div z 1
+add x 14
+eql x w
+eql x 0
+mul y 0
+add y 25
+mul y x
+add y 1
+mul z y
+mul y 0
+add y w
+add y 0
+mul y x
+add z y
+inp w
+mul x 0
+add x z
+mod x 26
+div z 26
+add x -4
+eql x w
+eql x 0
+mul y 0
+add y 25
+mul y x
+add y 1
+mul z y
+mul y 0
+add y w
+add y 13
+mul y x
+add z y
+inp w
+mul x 0
+add x z
+mod x 26
+div z 1
+add x 15
+eql x w
+eql x 0
+mul y 0
+add y 25
+mul y x
+add y 1
+mul z y
+mul y 0
+add y w
+add y 11
+mul y x
+add z y
+inp w
+mul x 0
+add x z
+mod x 26
+div z 1
+add x 15
+eql x w
+eql x 0
+mul y 0
+add y 25
+mul y x
+add y 1
+mul z y
+mul y 0
+add y w
+add y 6
+mul y x
+add z y
+inp w
+mul x 0
+add x z
+mod x 26
+div z 1
+add x 11
+eql x w
+eql x 0
+mul y 0
+add y 25
+mul y x
+add y 1
+mul z y
+mul y 0
+add y w
+add y 1
+mul y x
+add z y
+inp w
+mul x 0
+add x z
+mod x 26
+div z 26
+add x 0
+eql x w
+eql x 0
+mul y 0
+add y 25
+mul y x
+add y 1
+mul z y
+mul y 0
+add y w
+add y 7
+mul y x
+add z y
+inp w
+mul x 0
+add x z
+mod x 26
+div z 26
+add x 0
+eql x w
+eql x 0
+mul y 0
+add y 25
+mul y x
+add y 1
+mul z y
+mul y 0
+add y w
+add y 11
+mul y x
+add z y
+
+inp w
+mul x 0
+add x z
+mod x 26
+div z 26
+add x -3
+eql x w
+eql x 0
+mul y 0
+add y 25
+mul y x
+add y 1
+mul z y
+mul y 0
+add y w
+add y 14
+mul y x
+add z y
+
+inp w
+mul x 0
+add x z
+mod x 26
+div z 26
+add x -9
+eql x w
+eql x 0
+mul y 0
+add y 25
+mul y x
+add y 1
+mul z y
+mul y 0
+add y w
+add y 4
+mul y x
+add z y
+
+
+
+inp w
+mul x 0
+add x z
+mod x 26
+
+-- z * (1 + (if (x - 9) == w then 1 else 0) * 25) = -(x * (10 + w))
+div z 26
+
+-- z * (1 + (if (x - 9) == w then 1 else 0) * 25) = -(x * (10 + w))
+add x -9
+
+-- z * (1 + (if x == w then 1 else 0) * 25) = -(x * (10 + w))
+eql x w
+
+-- z * (1 + (if x == w then 0 else 1) * 25) = -(x * (10 + w))
+eql x 0
+
+mul y 0
+
+add y 25
+
+mul y x
+add y 1
+
+-- z * (1 + x * 25) = -(x * (10 + w))
+mul z y
+
+-- z = -(x * (10 + w))
+mul y 0
+
+-- z = -(x * (y + 10 + w))
+add y w
+
+-- z = -(x * (y + 10)
+add y 10
+
+-- z = -(x * y)
+mul y x
+
+-- z = -y
+add z y
