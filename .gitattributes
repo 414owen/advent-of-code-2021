@@ -1,3 +1,3 @@
-*.nix linguist-vendored
-nix/ linguist-vendored
 * text=auto
+* linguist-vendored
+*.hs linguist-vendored=false
