@@ -5,7 +5,6 @@ module Ad24 (main1, main2) where
 import Control.Arrow
 import Control.Applicative
 import Data.Maybe
-import Data.List
 import Data.Functor
 
 data Op = Inp Int
@@ -51,8 +50,7 @@ toChunks :: [Op] -> [Chunk]
 toChunks [] = []
 toChunks (inputOp:ops) =
   let (ops', rest) = first (inputOp:) $ break isInp ops
-      chunks = toChunks rest
-  in (:chunks) $ case (ops' !! 4, ops' !! 5, ops' !! 15) of
+  in (:toChunks rest) $ case (ops' !! 4, ops' !! 5, ops' !! 15) of
     (Div _  (Lit 1), _, Add _ (Lit n)) -> More n
     (Div _ (Lit 26), Add _ (Lit n), Add _ (Lit m)) -> Less n m
     _ -> error "Couldn't parse chunk"
@@ -60,9 +58,7 @@ toChunks (inputOp:ops) =
 readInput :: IO [Chunk]
 readInput = readFile "input/24"
   <&> lines
-  <&> takeWhile (/= "END")
   <&> filter (/= "")
-  <&> filter (not . ("--" `isPrefixOf`))
   <&> fmap parseOp
   <&> toChunks
 
