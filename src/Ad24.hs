@@ -85,7 +85,7 @@ solve :: [Int] -> [Chunk] -> Maybe [Int]
 solve digs = solve' digs 0 digs
 
 main :: [Int] -> IO ()
-main digs = readInput >>= print . fmap (concatMap show) . solve digs
+main digs = readInput >>= putStrLn . concatMap show . fromJust . solve digs
 
 main1 :: IO ()
 main1 = main $ reverse [1..9]
