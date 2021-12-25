@@ -13,7 +13,6 @@ import Data.Functor
 import Control.Monad.State.Strict
 import Control.Monad.Reader
 import Control.Monad.ST
-import Debug.Trace
 
 readInput :: IO (Int, Int)
 readInput = readFile "input/21"
@@ -67,7 +66,7 @@ takeTurn1 (pos, sc) = do
 
 tick1 :: M1 ()
 tick1 = do
-  AState{ turn, player1 = p1, player2 = p2 } <- traceShowId <$> get
+  AState{ turn, player1 = p1, player2 = p2 } <- get
   np <- case turn of
     P1 -> takeTurn1 p1
     P2 -> takeTurn1 p2
