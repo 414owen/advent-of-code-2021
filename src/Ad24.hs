@@ -79,6 +79,7 @@ solve' _ _ [] _ = Nothing
 solve' digs acc (input : rest) (chunk : chunks)
   = let res = evalChunk acc chunk input
     in case (chunk, res < acc) of
+        -- Marie Kondo the heck outta this search space
         (Less _ _, False) -> rec acc rest (chunk : chunks)
         _ -> ((input:) <$> rec res digs chunks) <|> rec acc rest (chunk : chunks)
    where
