@@ -55,25 +55,12 @@ add y 13
 mul y x
 add z y
 
--- z = acc
--- w = input
 inp w
-
--- x = 0
 mul x 0
-
--- x = z
 add x z
-
--- x = z % 26
 mod x 26
-
--- z1 = z / 26
 div z 26
-
--- x = z % 26 - 6
 add x -6
-
 eql x w
 eql x 0
 mul y 0
@@ -86,9 +73,6 @@ add y w
 add y 10
 mul y x
 add z y
-
-
--- if input == accumulator % 26 - (6) then acc / 26 else 26 * (acc / 26)
 
 inp w
 mul x 0
@@ -278,5 +262,4 @@ mul y 0
 add y w
 add y 10
 mul y x
--- z = -y
 add z y
